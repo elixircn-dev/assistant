@@ -7,14 +7,30 @@ defmodule Assistant.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Assistant.Worker.start_link(arg)
-      # {Assistant.Worker, arg}
-    ]
+    config = Application.get_env(:assistant, __MODULE__)
+
+    tg_serve? = config[:tg_serve] || false
+
+    children =
+      [
+        # Starts a worker by calling: Assistant.Worker.start_link(arg)
+        # {Assistant.Worker, arg}
+      ]
+      # Start the Telegram bot
+      |> serve_children(AssistantBot.Supervisor, tg_serve?)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Assistant.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp serve_children(children, child, server?) do
+    children ++
+      if server? do
+        [child]
+      else
+        []
+      end
   end
 end
