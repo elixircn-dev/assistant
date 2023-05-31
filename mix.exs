@@ -33,10 +33,12 @@ defmodule Assistant.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:telegex, "~> 0.1"},
+      {:telegex, git: "https://github.com/Hentioe/telegex.git", branch: "api_5.4-dev"},
       {:telegex_plug, "~> 0.3"},
       {:typed_struct, "~> 0.2"},
-      {:gettext, "~> 0.22"}
+      {:gettext, "~> 0.22"},
+      {:quantum, "~> 3.5"},
+      {:httpoison, "~> 2.1"}
     ]
   end
 end

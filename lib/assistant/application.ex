@@ -17,7 +17,9 @@ defmodule Assistant.Application do
         # {Assistant.Worker, arg}
 
         # 基于 :dets 的简单存储。
-        Assistant.EasyStore
+        Assistant.EasyStore,
+        # 定时任务调度器。
+        Assistant.Scheduler
       ]
       # Start the Telegram bot
       |> serve_children(AssistantBot.Supervisor, tg_serve?)

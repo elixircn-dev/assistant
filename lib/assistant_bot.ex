@@ -1,7 +1,7 @@
 defmodule AssistantBot do
   @moduledoc false
 
-  @type config_key :: :owner_id
+  @type config_key :: :owner_id | :group_id
 
   defmacro __using__(plug: opts) do
     quote do
