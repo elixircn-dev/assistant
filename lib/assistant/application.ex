@@ -15,6 +15,9 @@ defmodule Assistant.Application do
       [
         # Starts a worker by calling: Assistant.Worker.start_link(arg)
         # {Assistant.Worker, arg}
+
+        # 基于 :dest 的简单存储。
+        Assistant.EasyStore
       ]
       # Start the Telegram bot
       |> serve_children(AssistantBot.Supervisor, tg_serve?)
