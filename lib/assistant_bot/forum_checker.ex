@@ -123,23 +123,24 @@ defmodule AssistantBot.ForumChecker do
         Enum.any?(old_topics, &(&1.id == topic.id))
       end)
 
-    notify(new_topics)
+    successed = notify(new_topics)
+
+    :ok = EasyStore.put(@store_key, old_topics ++ successed)
   end
 
+  @spec notify([Topic.t()]) :: [Topic.t()]
   defp notify([]) do
     Logger.debug("[forum] No new pinned topics found")
 
-    :ignored
+    []
   end
 
   defp notify(topics) do
     successed = topics |> Enum.map(&send/1) |> Enum.reject(&is_nil/1)
 
-    :ok = EasyStore.put(@store_key, successed)
-
     Logger.debug("[forum] Successfully pushed #{length(successed)} topic(s)")
 
-    :ok
+    successed
   end
 
   @send_opts [parse_mode: "HTML"]
