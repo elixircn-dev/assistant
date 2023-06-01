@@ -115,7 +115,7 @@ defmodule AssistantBot.UpdatesPoller do
 
   @impl true
   def handle_info({:ssl_closed, _} = msg, state) do
-    Logger.warning("known network failure: #{inspect(msg: msg)}")
+    Logger.warning("Known network failure: #{inspect(msg: msg)}")
 
     {:noreply, state}
   end
