@@ -4,6 +4,8 @@ defmodule Assistant.ForumTopic do
   use TypedStruct
   use Assistant.I18n
 
+  import Assistant.Helper
+
   require Logger
 
   typedstruct do
@@ -57,25 +59,6 @@ defmodule Assistant.ForumTopic do
 
     #{tfooter}<a href="https://elixirforum.com/t/#{topic.slug}/#{topic.id}">#{treading}</a>
     """
-  end
-
-  def elapsed_time(created_at) do
-    dt_now = DateTime.utc_now()
-    minutes = DateTime.diff(dt_now, created_at, :minute)
-
-    if minutes < 60 do
-      commands_text("%{count} 分钟之前", count: minutes)
-    else
-      hours = DateTime.diff(dt_now, created_at, :hour)
-
-      if hours < 24 do
-        commands_text("%{count} 小时之前", count: hours)
-      else
-        days = DateTime.diff(dt_now, created_at, :day)
-
-        commands_text("%{count} 天之前", count: days)
-      end
-    end
   end
 
   defdelegate safe_html(text), to: Telegex.Tools

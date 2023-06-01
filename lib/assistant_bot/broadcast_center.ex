@@ -3,9 +3,12 @@ defmodule AssistantBot.BroadcastCenter do
 
   use GenServer
   use Assistant.PubSub
+  use Assistant.I18n
   use AssistantBot.MessageCaller
 
   alias Assistant.{ForumTopic, EasyStore}
+
+  import Assistant.Helper
 
   require Logger
 
@@ -37,6 +40,14 @@ defmodule AssistantBot.BroadcastCenter do
     {:noreply, state}
   end
 
+  @impl true
+  def handle_info({:repo_release, {notification, subject}}, state) do
+    # 推送到群组
+    push_repo_release(notification, subject)
+
+    {:noreply, state}
+  end
+
   @send_opts [parse_mode: "HTML"]
 
   # 推送主题到群组，如果失败将返回原主题，成功则返回 `nil`。
@@ -57,5 +68,52 @@ defmodule AssistantBot.BroadcastCenter do
 
         topic
     end
+  end
+
+  def push_repo_release(notification, subject) do
+    chat_id = AssistantBot.config(:group_id)
+
+    repo_name = notification["repository"]["name"]
+    repo_description = notification["repository"]["description"]
+    repo_url = notification["repository"]["html_url"]
+    full_name = notification["repository"]["full_name"]
+    subject_title = notification["subject"]["title"]
+
+    updated_at =
+      case DateTime.from_iso8601(notification["updated_at"]) do
+        {:ok, dt, 0} ->
+          dt
+
+        {:error, reason} ->
+          Logger.error(
+            "[github] Parse notification `updated_at` failed: #{inspect(reason: reason)}",
+            chat_id: chat_id
+          )
+
+          nil
+      end
+
+    tag_name = subject["tag_name"]
+    tag_url = subject["html_url"]
+
+    tfooter = commands_text("发布了新版本，更新于 %{elapsed_time}。", elapsed_time: elapsed_time(updated_at))
+
+    title = "#{tag_name} in #{full_name}"
+
+    text = """
+    <b><u>Repo Release</u></b>
+
+    <a href="#{repo_url}"><b>#{Telegex.Tools.safe_html(repo_name)}</b></a> <i>#{Telegex.Tools.safe_html(repo_description)}</i>
+
+    #{Telegex.Tools.safe_html(subject_title)}
+
+    <a href="#{tag_url}">#{Telegex.Tools.safe_html(title)}</a>
+
+    #{tfooter}
+    """
+
+    send_text(chat_id, text, parse_mode: "HTML", logging: true)
+
+    :ok
   end
 end

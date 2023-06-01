@@ -6,6 +6,9 @@ if config_env() == :prod do
   # 配置数据目录
   config :assistant, data_dir: System.fetch_env!("ASSISTANT_DATA_DIR")
 
+  # 配置 GitHub token
+  config :assistant, github_token: System.fetch_env!("ASSISTANT_GITHUB_TOKEN")
+
   # 配置 TG bot 的 token
   config :telegex, token: System.fetch_env!("ASSISTANT_BOT_TOKEN")
 

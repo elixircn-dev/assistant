@@ -20,6 +20,8 @@ defmodule Assistant.Application do
         {Phoenix.PubSub, name: Assistant.PubSub},
         # 基于 :dets 的简单存储。
         Assistant.EasyStore,
+        # 轮询读取 GitHub 通知。
+        Assistant.GitHub.NotificationsPoller,
         # 定时任务调度器。
         Assistant.Scheduler
       ]
