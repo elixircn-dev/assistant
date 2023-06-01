@@ -97,10 +97,10 @@ defmodule Assistant.GitHub.NotificationsPoller do
 
         cond do
           Enum.empty?(notifications) ->
-            {:ok, new}
+            {:ok, Enum.reverse(new)}
 
           length(new) < length(all) ->
-            {:ok, new}
+            {:ok, Enum.reverse(new)}
 
           true ->
             new_notifications(offset, page + 1, all, new)
