@@ -28,7 +28,9 @@ defmodule AssistantBot.Supervisor do
       # 消费更新的动态主管。
       AssistantBot.Consumer,
       # 更新的拉取器。
-      AssistantBot.UpdatesPoller
+      AssistantBot.UpdatesPoller,
+      # 广播中心。
+      AssistantBot.BroadcastCenter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
