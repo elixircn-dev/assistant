@@ -123,9 +123,9 @@ defmodule AssistantBot.ForumChecker do
         Enum.any?(old_topics, &(&1.id == topic.id))
       end)
 
-    successed = notify(new_topics)
+    succeeded = notify(new_topics)
 
-    :ok = EasyStore.put(@store_key, old_topics ++ successed)
+    :ok = EasyStore.put(@store_key, old_topics ++ succeeded)
   end
 
   @spec notify([Topic.t()]) :: [Topic.t()]
@@ -136,11 +136,11 @@ defmodule AssistantBot.ForumChecker do
   end
 
   defp notify(topics) do
-    successed = topics |> Enum.map(&push/1) |> Enum.reject(&is_nil/1)
+    succeeded = topics |> Enum.map(&push/1) |> Enum.reject(&is_nil/1)
 
-    Logger.debug("[forum] Successfully pushed #{length(successed)} topic(s)")
+    Logger.debug("[forum] Successfully pushed #{length(succeeded)} topic(s)")
 
-    successed
+    succeeded
   end
 
   @send_opts [parse_mode: "HTML"]
