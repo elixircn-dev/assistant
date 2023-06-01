@@ -24,7 +24,7 @@ defmodule AssistantBot.RespStartCmdPlug do
     thello = commands_text("你好，我是来自 %{chat_link} 的开源机器人助理", chat_link: "@elixircn_dev")
 
     tdetais =
-      commands_text("您可以访问 %{link} 了解我的更多细节～",
+      commands_text("访问 %{link} 了解我的更多细节～",
         link: ~s|<a href="https://github.com/elixircn-dev/assistant">elixircn-dev/assistant</a>|
       )
 
