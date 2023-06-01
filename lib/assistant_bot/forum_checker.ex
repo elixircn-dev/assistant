@@ -123,11 +123,13 @@ defmodule AssistantBot.ForumChecker do
         Enum.any?(old_topics, &(&1.id == topic.id))
       end)
 
-    succeeded = notify(new_topics)
+    failed = notify(new_topics)
 
-    :ok = EasyStore.put(@store_key, old_topics ++ succeeded)
+    # 缓存除推送失败的主题外的所有主题
+    :ok = EasyStore.put(@store_key, topics -- failed)
   end
 
+  # 向群组发送通知，返回发送失败的主题列表。
   @spec notify([Topic.t()]) :: [Topic.t()]
   defp notify([]) do
     Logger.debug("[forum] No new pinned topics found")
@@ -136,15 +138,16 @@ defmodule AssistantBot.ForumChecker do
   end
 
   defp notify(topics) do
-    succeeded = topics |> Enum.map(&push/1) |> Enum.reject(&is_nil/1)
+    failed = topics |> Enum.map(&push/1) |> Enum.reject(&is_nil/1)
 
-    Logger.debug("[forum] Successfully pushed #{length(succeeded)} topic(s)")
+    Logger.debug("[forum] Successfully pushed #{length(topics) - length(failed)} topic(s)")
 
-    succeeded
+    failed
   end
 
   @send_opts [parse_mode: "HTML"]
 
+  # 推送主题到群组，如果失败将返回原主题，成功则返回 `nil`。
   @spec push(Topic.t()) :: Topic.t() | nil
   defp push(topic) do
     chat_id = AssistantBot.config(:group_id)
@@ -155,12 +158,12 @@ defmodule AssistantBot.ForumChecker do
       {:ok, %{message_id: message_id}} ->
         if pin?, do: Telegex.pin_chat_message(chat_id, message_id)
 
-        topic
+        nil
 
       {:error, reason} ->
         Logger.error("[forum] Send message failed: #{inspect(reason: reason)}", chat_id: chat_id)
 
-        nil
+        topic
     end
   end
 end
