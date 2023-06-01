@@ -38,7 +38,10 @@ defmodule Assistant.MixProject do
       {:typed_struct, "~> 0.2"},
       {:gettext, "~> 0.22"},
       {:quantum, "~> 3.5"},
-      {:httpoison, "~> 2.1"}
+      {:jason, "~> 1.4"},
+      {:httpoison, "~> 2.1", override: true},
+      {:tentacat, git: "https://github.com/edgurgel/tentacat.git", branch: "master"},
+      {:phoenix_pubsub, "~> 2.1"}
     ]
   end
 end
