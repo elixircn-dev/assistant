@@ -112,7 +112,7 @@ defmodule AssistantBot.ForumChecker do
   end
 
   defp check_and_notify([]) do
-    Logger.debug("[forum] No new topics found")
+    Logger.debug("[forum] No pinned topics found")
   end
 
   defp check_and_notify(topics) do
@@ -126,12 +126,18 @@ defmodule AssistantBot.ForumChecker do
     notify(new_topics)
   end
 
-  defp notify([]), do: :ignored
+  defp notify([]) do
+    Logger.debug("[forum] No new pinned topics found")
+
+    :ignored
+  end
 
   defp notify(topics) do
     successed = topics |> Enum.map(&send/1) |> Enum.reject(&is_nil/1)
 
     :ok = EasyStore.put(@store_key, successed)
+
+    Logger.debug("[forum] Successfully pushed #{length(successed)} topic(s)")
 
     :ok
   end

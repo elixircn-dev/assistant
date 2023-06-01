@@ -17,7 +17,11 @@ defmodule AssistantBot.Supervisor do
       # 初始化 `from_self` 字段
       AssistantBot.InitFromSelfPlug,
       # 响应 `/start` 命令
-      AssistantBot.RespStartCmdPlug
+      AssistantBot.RespStartCmdPlug,
+      # 响应 `/run` 命令
+      AssistantBot.RespRunCmdPlug,
+      # 响应 `/clear` 命令
+      AssistantBot.RespClearCmdPlug
     ])
 
     children = [
