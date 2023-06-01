@@ -106,7 +106,7 @@ defmodule AssistantBot.ForumChecker do
   end
 
   defp handle_response({:error, reason}) do
-    Logger.error("[forum] Topics request error: #{inspect(reason: reason)}")
+    Logger.error("[forum] Topics request failed: #{inspect(reason: reason)}")
 
     []
   end
@@ -136,7 +136,7 @@ defmodule AssistantBot.ForumChecker do
   end
 
   defp notify(topics) do
-    successed = topics |> Enum.map(&send/1) |> Enum.reject(&is_nil/1)
+    successed = topics |> Enum.map(&push/1) |> Enum.reject(&is_nil/1)
 
     Logger.debug("[forum] Successfully pushed #{length(successed)} topic(s)")
 
@@ -145,16 +145,20 @@ defmodule AssistantBot.ForumChecker do
 
   @send_opts [parse_mode: "HTML"]
 
-  @spec send(Topic.t()) :: Topic.t() | nil
-  defp send(topic) do
+  @spec push(Topic.t()) :: Topic.t() | nil
+  defp push(topic) do
     chat_id = AssistantBot.config(:group_id)
 
+    pin? = Enum.member?(topic.tags, "elixir-release")
+
     case send_text(chat_id, Topic.render_text(topic), @send_opts) do
-      {:ok, _} ->
+      {:ok, %{message_id: message_id}} ->
+        if pin?, do: Telegex.pin_chat_message(chat_id, message_id)
+
         topic
 
       {:error, reason} ->
-        Logger.error("[forum] Send message error: #{inspect(reason: reason)}", chat_id: chat_id)
+        Logger.error("[forum] Send message failed: #{inspect(reason: reason)}", chat_id: chat_id)
 
         nil
     end
