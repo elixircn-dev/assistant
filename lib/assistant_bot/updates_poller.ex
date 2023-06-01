@@ -25,7 +25,7 @@ defmodule AssistantBot.UpdatesPoller do
       description: "清理某些缓存"
     },
     %BotCommand{
-      command: "exec",
+      command: "run",
       description: "运行某些任务"
     }
   ]
