@@ -40,7 +40,6 @@ defmodule Assistant.MixProject do
       {:quantum, "~> 3.5"},
       {:jason, "~> 1.4"},
       {:httpoison, "~> 2.1", override: true},
-      {:tentacat, git: "https://github.com/edgurgel/tentacat.git", branch: "master"},
       {:phoenix_pubsub, "~> 2.1"}
     ]
   end
