@@ -7,6 +7,9 @@ defmodule Assistant.GitHub.NotificationsPoller do
   alias Assistant.EasyStore
   alias Assistant.GitHub.Consumer
 
+  # 每 61 秒读取一次通知
+  @interval 61 * 1000
+
   require Logger
 
   @store_key :github_notifications_offset
@@ -57,8 +60,7 @@ defmodule Assistant.GitHub.NotificationsPoller do
           offset
       end
 
-    # 每 61 秒一个请求
-    :timer.sleep(61 * 1000)
+    :timer.sleep(@interval)
 
     schedule_pull_notifications()
 
@@ -71,13 +73,18 @@ defmodule Assistant.GitHub.NotificationsPoller do
   def init(state) do
     Logger.info("GitHub account (@#{state.username}) is working")
 
-    schedule_pull_notifications()
+    delay_schedule_pull_notifications()
 
     {:ok, state}
   end
 
   defp schedule_pull_notifications do
     send(self(), :pull)
+  end
+
+  # 延迟调度通知读取，避免后续消费进程未启动。通常此函数在 `init/1` 中用作初次调用。 
+  defp delay_schedule_pull_notifications do
+    Process.send_after(self(), :pull, @interval)
   end
 
   def new_notifications(offset, page \\ 1, all \\ [], new \\ []) do
