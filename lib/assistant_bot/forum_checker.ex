@@ -4,6 +4,7 @@ defmodule AssistantBot.ForumChecker do
   # TODO: 将此模块改为 PubSub 架构，仅负责消息的生产不再负责推送
 
   use TypedStruct
+  use Assistant.I18n
   use AssistantBot.MessageCaller
 
   alias Assistant.EasyStore
@@ -33,7 +34,7 @@ defmodule AssistantBot.ForumChecker do
 
           {:error, reason} ->
             Logger.error(
-              "Elixir Forum topic `created_at` field parse error.: #{inspect(reason: reason)}"
+              "[forum] Topic `created_at` field parse failed: #{inspect(reason: reason)}"
             )
 
             nil
@@ -55,11 +56,37 @@ defmodule AssistantBot.ForumChecker do
           ~s|<a href="https://elixirforum.com/tag/#{tag}">##{safe_html(tag)}</a>|
         end)
 
+      elapsed_time = elapsed_time(topic.created_at)
+
+      tfooter = commands_text("新的置顶主题，发表于 %{elapsed_time}。", elapsed_time: elapsed_time)
+      treading = commands_text("前往阅读")
+
       """
+      <b><u>Elixir Forum</u></b>
+
       <b>#{safe_html(topic.title)}</b> #{tags_text}
 
-      官方论坛置顶了新的主题帖！<a href="https://elixirforum.com/t/#{topic.slug}/#{topic.id}">前往阅读</a>
+      #{tfooter}<a href="https://elixirforum.com/t/#{topic.slug}/#{topic.id}">#{treading}</a>
       """
+    end
+
+    def elapsed_time(created_at) do
+      dt_now = DateTime.utc_now()
+      minutes = DateTime.diff(dt_now, created_at, :minute)
+
+      if minutes < 60 do
+        commands_text("%{count} 分钟之前", count: minutes)
+      else
+        hours = DateTime.diff(dt_now, created_at, :hour)
+
+        if hours < 24 do
+          commands_text("%{count} 小时之前", count: hours)
+        else
+          days = DateTime.diff(dt_now, created_at, :day)
+
+          commands_text("%{count} 天之前", count: days)
+        end
+      end
     end
 
     defdelegate safe_html(text), to: Telegex.Tools
