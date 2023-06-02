@@ -7,6 +7,8 @@ defmodule Assistant.GitHub.NotificationsPoller do
   alias Assistant.EasyStore
   alias Assistant.GitHub.Consumer
 
+  import Assistant.GitHub.Client
+
   # 每 61 秒读取一次通知
   @interval 61 * 1000
 
@@ -42,7 +44,7 @@ defmodule Assistant.GitHub.NotificationsPoller do
     offset = EasyStore.get(@store_key, 0)
 
     offset =
-      case new_notifications(offset) do
+      case get_notifications(offset) do
         {:ok, notifications} ->
           # 消费通知
           Enum.each(notifications, &Consumer.dispatch/1)
@@ -87,7 +89,7 @@ defmodule Assistant.GitHub.NotificationsPoller do
     Process.send_after(self(), :pull, @interval)
   end
 
-  def new_notifications(offset, page \\ 1, all \\ [], new \\ []) do
+  def get_notifications(offset, page \\ 1, all \\ [], new \\ []) do
     append_fun = fn n, new ->
       if String.to_integer(n["id"]) > offset do
         {:cont, new ++ [n]}
@@ -110,72 +112,11 @@ defmodule Assistant.GitHub.NotificationsPoller do
             {:ok, Enum.reverse(new)}
 
           true ->
-            new_notifications(offset, page + 1, all, new)
+            get_notifications(offset, page + 1, all, new)
         end
 
       e ->
         e
     end
-  end
-
-  def me, do: call(:get, "/user")
-
-  def notifications(params), do: call(:get, "/notifications", params)
-
-  def subscription(owner, repo) do
-    call(:put, "/repos/#{owner}/#{repo}/subscription", %{subscribed: true, ignored: false})
-  end
-
-  @accept_header {"Accept", "application/vnd.github+json"}
-
-  @spec call(atom, String.t(), map | keyword) :: {:ok, map | list} | {:error, any}
-  def call(method, path, params \\ []) do
-    url = "https://api.github.com#{path}"
-
-    r =
-      case method do
-        :put ->
-          json_body = Jason.encode!(params)
-
-          put(url, json_body)
-
-        :get ->
-          query_string = URI.encode_query(Enum.into(params, %{}))
-
-          url =
-            if query_string != "" do
-              "#{url}?#{query_string}"
-            else
-              url
-            end
-
-          get(url)
-      end
-
-    handle_response(r)
-  end
-
-  def put(url, body) do
-    HTTPoison.put(url, body, [@accept_header, authorization_header()])
-  end
-
-  def get(url) do
-    HTTPoison.get(url, [@accept_header, authorization_header()])
-  end
-
-  def handle_response({:ok, resp}) do
-    json = Jason.decode!(resp.body)
-
-    {:ok, json}
-  end
-
-  def handle_response({:error, reason}) do
-    {:error, reason}
-  end
-
-  defp authorization_header do
-    token = Application.get_env(:assistant, :github_token)
-
-    {"Authorization", "Bearer #{token}"}
   end
 end

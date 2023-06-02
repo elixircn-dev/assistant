@@ -3,13 +3,14 @@ defmodule Assistant.GitHub.Consumer do
 
   use Assistant.PubSub
 
+  import Assistant.GitHub.Client
+
   require Logger
 
   def dispatch(%{"subject" => %{"type" => "Release"}} = notification) do
     subject_url = notification["subject"]["url"]
-    <<"https://api.github.com" <> subject_path::binary>> = subject_url
 
-    case Assistant.GitHub.NotificationsPoller.call(:get, subject_path) do
+    case call(:get, subject_url) do
       {:ok, subject} ->
         :ok = broadcast("github", {:repo_release, {notification, subject}})
 
@@ -17,7 +18,7 @@ defmodule Assistant.GitHub.Consumer do
 
       {:error, reason} ->
         Logger.error(
-          "[github] Call `subject_url` failed: #{inspect(path: subject_path, reason: reason)}"
+          "[github] Call `subject_url` failed: #{inspect(subject_url: subject_url, reason: reason)}"
         )
 
         :ignored
