@@ -1,6 +1,8 @@
 # Assistant
 
-Assistant 是以 `elixircn-dev` 的名义开发的以信息推送为主的项目，它是为 Elixir 中文开发者们设计的机器人助理。目前仅服务于 [@elixircn_dev](https://t.me/elixircn_dev) 群组。
+Assistant 是以 `elixircn-dev` 的名义开发的以信息推送为主的项目，它是为 Elixir 中文开发者们设计的机器人助理。
+
+_目前 [@elixircn_assistant_bot](https://t.me/elixircn_assistant_bot) 仅服务于 [@elixircn_dev](https://t.me/elixircn_dev) 群组。_
 
 ## 介绍
 
