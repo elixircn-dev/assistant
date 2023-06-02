@@ -10,7 +10,7 @@ defmodule AssistantBot.Plugs.RespUnSubscribeCmd do
 
   @subscribed_repos_key :subscribed_repos
 
-  # 重写匹配规则，以 `/ubsubscribe` 开始即匹配。
+  # 重写匹配规则，以 `/unsubscribe` 开始即匹配。
   @impl true
   def match(text, state) do
     if String.starts_with?(text, @command) do
