@@ -1,4 +1,4 @@
-defmodule Assistant.ForumChecker do
+defmodule Assistant.Forum.Checker do
   @moduledoc false
 
   use TypedStruct
@@ -6,7 +6,8 @@ defmodule Assistant.ForumChecker do
   use Assistant.PubSub
   use AssistantBot.MessageCaller
 
-  alias Assistant.{EasyStore, ForumTopic}
+  alias Assistant.EasyStore
+  alias Assistant.Forum.Topic
   alias HTTPoison.Response
 
   require Logger
@@ -19,11 +20,11 @@ defmodule Assistant.ForumChecker do
     @endpoint |> HTTPoison.get() |> handle_response() |> check_and_notify()
   end
 
-  @spec handle_response({:ok, Response.t()} | {:error, any}) :: [ForumTopic.t()]
+  @spec handle_response({:ok, Response.t()} | {:error, any}) :: [Topic.t()]
   defp handle_response({:ok, resp}) do
     json = Jason.decode!(resp.body)
 
-    json["topic_list"]["topics"] |> Enum.map(&ForumTopic.from/1) |> Enum.filter(& &1.pinned)
+    json["topic_list"]["topics"] |> Enum.map(&Topic.from/1) |> Enum.filter(& &1.pinned)
   end
 
   defp handle_response({:error, reason}) do

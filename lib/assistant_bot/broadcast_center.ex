@@ -6,7 +6,8 @@ defmodule AssistantBot.BroadcastCenter do
   use Assistant.I18n
   use AssistantBot.MessageCaller
 
-  alias Assistant.{ForumTopic, EasyStore}
+  alias Assistant.EasyStore
+  alias Assistant.Forum.Topic
   alias Assistant.HexPm.Package
 
   import Assistant.Helper
@@ -61,13 +62,15 @@ defmodule AssistantBot.BroadcastCenter do
   @send_opts [parse_mode: "HTML"]
 
   # 推送主题到群组，如果失败将返回原主题，成功则返回 `nil`。
-  @spec push_forum_topic(ForumTopic.t()) :: ForumTopic.t() | nil
+  @spec push_forum_topic(Topic.t()) :: Topic.t() | nil
   defp push_forum_topic(topic) do
     chat_id = AssistantBot.config(:group_id)
 
     pin? = Enum.member?(topic.tags, "elixir-release")
 
-    case send_text(chat_id, ForumTopic.render_text(topic), @send_opts) do
+    text = Topic.render_message_text(:pinned, topic)
+
+    case send_text(chat_id, text, @send_opts) do
       {:ok, %{message_id: message_id}} ->
         if pin?, do: Telegex.pin_chat_message(chat_id, message_id)
 

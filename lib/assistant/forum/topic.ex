@@ -1,4 +1,4 @@
-defmodule Assistant.ForumTopic do
+defmodule Assistant.Forum.Topic do
   @moduledoc false
 
   use TypedStruct
@@ -41,7 +41,8 @@ defmodule Assistant.ForumTopic do
     }
   end
 
-  def render_text(topic) do
+  @spec render_message_text(:pinned, __MODULE__.t()) :: String.t()
+  def render_message_text(:pinned, topic) do
     tags_text =
       Enum.map_join(topic.tags, " ", fn tag ->
         ~s|<a href="https://elixirforum.com/tag/#{tag}">##{safe_html(tag)}</a>|

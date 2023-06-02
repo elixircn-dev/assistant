@@ -29,7 +29,7 @@ defmodule AssistantBot.RespRunCmdPlug do
 
     case task_name do
       "pinned_forum_topics" ->
-        Assistant.ForumChecker.run()
+        Assistant.Forum.Checker.run()
 
         send_text(chat_id, commands_text("执行结束。"), logging: true)
 

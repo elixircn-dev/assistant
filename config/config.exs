@@ -16,7 +16,7 @@ config :assistant, data_dir: "data"
 config :assistant, Assistant.Scheduler,
   jobs: [
     # Every 15 minutes
-    {"*/15 * * * *", &Assistant.ForumChecker.run/0}
+    {"*/15 * * * *", &Assistant.Forum.Checker.run/0}
   ]
 
 import_config "#{config_env()}.exs"
