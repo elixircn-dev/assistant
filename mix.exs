@@ -40,7 +40,8 @@ defmodule Assistant.MixProject do
       {:quantum, "~> 3.5"},
       {:jason, "~> 1.4"},
       {:httpoison, "~> 2.1", override: true},
-      {:phoenix_pubsub, "~> 2.1"}
+      {:phoenix_pubsub, "~> 2.1"},
+      {:floki, "~> 0.34.2"}
     ]
   end
 end
