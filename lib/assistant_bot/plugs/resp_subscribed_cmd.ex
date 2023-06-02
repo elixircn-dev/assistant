@@ -58,6 +58,28 @@ defmodule AssistantBot.Plugs.RespSubscribedCmd do
     {:ok, state}
   end
 
+  @impl true
+  def handle(_message, state) do
+    %{chat_id: chat_id} = state
+
+    ttitle1 = commands_text("已订阅的仓库列表")
+    ttitle2 = commands_text("已订阅的包列表")
+
+    text = """
+    <b>#{ttitle1}</b>
+
+    #{render_subscribed_repos(subscribed_repos())}
+
+    <b>#{ttitle2}</b>
+
+    #{render_subscribed_pkgs(hex_pm_subscribed_pkgs())}
+    """
+
+    send_text(chat_id, text, parse_mode: "HTML", logging: true)
+
+    {:ok, state}
+  end
+
   defp render_subscribed_repos([]) do
     "<code>#{commands_text("空")}</code>"
   end
@@ -71,6 +93,6 @@ defmodule AssistantBot.Plugs.RespSubscribedCmd do
   end
 
   defp render_subscribed_pkgs(subscribed_pkgs) do
-    Enum.map_join(subscribed_pkgs, "\n", fn pkg -> "<code>#{pkg}</code>" end)
+    Enum.map_join(subscribed_pkgs, " ", fn pkg -> "<code>#{pkg}</code>" end)
   end
 end
