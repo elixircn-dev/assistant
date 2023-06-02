@@ -45,7 +45,7 @@ defmodule Assistant.HexPm.RecentlyPoller do
     sku =
       case get_packages(sku) do
         {:ok, packages} ->
-          # 消费通知
+          # 消费新的包版本
           Enum.each(packages, &Consumer.receive/1)
 
           if Enum.empty?(packages) do
@@ -56,7 +56,7 @@ defmodule Assistant.HexPm.RecentlyPoller do
           end
 
         {:error, reason} ->
-          Logger.warning("[github] Pull packages failed: #{inspect(reason: reason)}")
+          Logger.warning("[hex_pm] Pull packages failed: #{inspect(reason: reason)}")
 
           sku
       end
