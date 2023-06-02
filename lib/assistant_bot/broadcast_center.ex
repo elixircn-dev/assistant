@@ -7,6 +7,7 @@ defmodule AssistantBot.BroadcastCenter do
   use AssistantBot.MessageCaller
 
   alias Assistant.{ForumTopic, EasyStore}
+  alias Assistant.HexPm.Package
 
   import Assistant.Helper
 
@@ -125,23 +126,11 @@ defmodule AssistantBot.BroadcastCenter do
     :ok
   end
 
+  @spec push_pkg_publish(Package.t()) :: :ok
   def push_pkg_publish(package) do
-    alias Assistant.HexPm.Package
-
     chat_id = AssistantBot.config(:group_id)
 
-    url = Package.url(package)
-    doc_url = Package.doc_url(package)
-
-    text = """
-    <b><u>Hex Package Publish</u></b>
-
-    <a href="#{url}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> <i>#{Telegex.Tools.safe_html(package.description)}</i>
-
-    v#{Telegex.Tools.safe_html(package.version)}
-
-    <a href="#{doc_url}">阅读文档</a>
-    """
+    text = Package.render_message_text(:publish, package)
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
 

@@ -24,4 +24,20 @@ defmodule Assistant.HexPm.Package do
   def url(package), do: "https://hex.pm/packages/#{package.name}"
 
   def doc_url(package), do: "https://hexdocs.pm/#{package.name}/#{package.version}"
+
+  @spec render_message_text(:publish, __MODULE__.t()) :: String.t()
+  def render_message_text(:publish, package) do
+    url = url(package)
+    doc_url = doc_url(package)
+
+    """
+    <b><u>Hex Package Publish</u></b>
+
+    <a href="#{url}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> <i>#{Telegex.Tools.safe_html(package.description)}</i>
+
+    v#{Telegex.Tools.safe_html(package.version)}
+
+    <a href="#{doc_url}">阅读文档</a>
+    """
+  end
 end
