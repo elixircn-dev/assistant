@@ -5,6 +5,8 @@ defmodule AssistantBot.RespClearCmdPlug do
 
   alias Assistant.EasyStore
 
+  @subscribed_repos_key :subscribed_repos
+
   # 重写匹配规则，以 `/clear` 开始即匹配。
   @impl true
   def match(text, state) do
@@ -31,9 +33,14 @@ defmodule AssistantBot.RespClearCmdPlug do
 
     case task_name do
       "pinned_forum_topics" ->
-        EasyStore.delete(:pinned_forum_topics)
+        :ok = EasyStore.delete(:pinned_forum_topics)
 
-        send_text(chat_id, commands_text("执行结束。"), logging: true)
+        send_text(chat_id, commands_text("已清理论坛置顶主题缓存。"), logging: true)
+
+      "subscribed_repos" ->
+        :ok = EasyStore.delete(@subscribed_repos_key)
+
+        send_text(chat_id, commands_text("已经清理所有订阅仓库。"), logging: true)
 
       _ ->
         text = commands_text("未知的清理目标: %{target_name}。", target_name: "<code>#{task_name}</code>")

@@ -21,7 +21,13 @@ defmodule AssistantBot.Supervisor do
       # 响应 `/run` 命令
       AssistantBot.RespRunCmdPlug,
       # 响应 `/clear` 命令
-      AssistantBot.RespClearCmdPlug
+      AssistantBot.RespClearCmdPlug,
+      # 响应 `/subscribe` 命令
+      AssistantBot.Plugs.RespSubscribeRepoCmd,
+      # 响应 `/unsubscribe` 命令
+      AssistantBot.Plugs.RespUnSubscribeRepoCmd,
+      # 响应 `/subscribed_repos` 命令
+      AssistantBot.Plugs.RespSubscribedReposCmd
     ])
 
     children = [

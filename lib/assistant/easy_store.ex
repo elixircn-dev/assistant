@@ -25,6 +25,11 @@ defmodule Assistant.EasyStore do
     {:ok, state}
   end
 
+  @spec get(atom, any) :: any
+  def get(key, default \\ nil) do
+    GenServer.call(__MODULE__, {:get, key}) || default
+  end
+
   @spec put(atom, any) :: :ok
   def put(key, value) do
     GenServer.cast(__MODULE__, {:put, key, value})
@@ -35,9 +40,22 @@ defmodule Assistant.EasyStore do
     GenServer.cast(__MODULE__, {:delete, key})
   end
 
-  @spec get(atom, any) :: any
-  def get(key, default \\ nil) do
-    GenServer.call(__MODULE__, {:get, key}) || default
+  # TODO: 将此函数改为并发安全型
+  def list_append(key, value) do
+    case get(key) do
+      nil -> put(key, [value])
+      list when is_list(list) -> put(key, list ++ [value])
+      _ -> :non_list
+    end
+  end
+
+  # TODO: 将此函数改为并发安全型
+  def list_remove(key, value) do
+    case get(key) do
+      nil -> :ok
+      list when is_list(list) -> put(key, List.delete(list, value))
+      _ -> :non_list
+    end
   end
 
   @impl true
