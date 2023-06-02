@@ -21,16 +21,16 @@ defmodule AssistantBot.UpdatesPoller do
 
   @commands [
     %BotCommand{
-      command: "subscribe_repo",
-      description: "订阅 GitHub 仓库"
+      command: "subscribe",
+      description: "订阅新内容"
     },
     %BotCommand{
-      command: "unsubscribe_repo",
-      description: "取消订阅 GitHub 仓库"
+      command: "unsubscribe",
+      description: "取消已订阅的内容"
     },
     %BotCommand{
-      command: "subscribed_repos",
-      description: "已订阅的仓库列表"
+      command: "subscribed",
+      description: "已订阅的内容列表"
     },
     %BotCommand{
       command: "clear",

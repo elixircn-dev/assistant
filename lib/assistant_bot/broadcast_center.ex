@@ -22,6 +22,7 @@ defmodule AssistantBot.BroadcastCenter do
   def init(state) do
     :ok = subscribe("forum")
     :ok = subscribe("github")
+    :ok = subscribe("hex_pm")
 
     Logger.info("Broadcast center started")
 
@@ -44,6 +45,14 @@ defmodule AssistantBot.BroadcastCenter do
   def handle_info({:repo_release, {notification, subject}}, state) do
     # 推送到群组
     push_repo_release(notification, subject)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:pkg_publish, package}, state) do
+    # 推送到群组
+    push_pkg_publish(package)
 
     {:noreply, state}
   end
@@ -96,9 +105,8 @@ defmodule AssistantBot.BroadcastCenter do
     tag_name = subject["tag_name"]
     tag_url = subject["html_url"]
 
-    tfooter = commands_text("发布了新版本，更新于 %{elapsed_time}。", elapsed_time: elapsed_time(updated_at))
-
     title = "#{tag_name} in #{full_name}"
+    tfooter = commands_text("新的发布，更新于 %{elapsed_time}。", elapsed_time: elapsed_time(updated_at))
 
     text = """
     <b><u>Repo Release</u></b>
@@ -110,6 +118,29 @@ defmodule AssistantBot.BroadcastCenter do
     <a href="#{tag_url}">#{Telegex.Tools.safe_html(title)}</a>
 
     #{tfooter}
+    """
+
+    send_text(chat_id, text, parse_mode: "HTML", logging: true)
+
+    :ok
+  end
+
+  def push_pkg_publish(package) do
+    alias Assistant.HexPm.Package
+
+    chat_id = AssistantBot.config(:group_id)
+
+    url = Package.url(package)
+    doc_url = Package.doc_url(package)
+
+    text = """
+    <b><u>Hex Package Publish</u></b>
+
+    <a href="#{url}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> <i>#{Telegex.Tools.safe_html(package.description)}</i>
+
+    v#{Telegex.Tools.safe_html(package.version)}
+
+    <a href="#{doc_url}">阅读文档</a>
     """
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)

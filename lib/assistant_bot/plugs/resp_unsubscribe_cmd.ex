@@ -1,15 +1,16 @@
-defmodule AssistantBot.Plugs.RespUnSubscribeRepoCmd do
+defmodule AssistantBot.Plugs.RespUnSubscribeCmd do
   @moduledoc false
 
-  use AssistantBot, plug: [commander: :unsubscribe_repo]
+  use AssistantBot, plug: [commander: :unsubscribe]
 
   alias Assistant.EasyStore
 
+  import Assistant.Subscriptions
   import Assistant.GitHub.Client, only: [unsubscribe: 2]
 
   @subscribed_repos_key :subscribed_repos
 
-  # 重写匹配规则，以 `/subscribe_repo` 开始即匹配。
+  # 重写匹配规则，以 `/ubsubscribe` 开始即匹配。
   @impl true
   def match(text, state) do
     if String.starts_with?(text, @command) do
@@ -28,7 +29,7 @@ defmodule AssistantBot.Plugs.RespUnSubscribeRepoCmd do
   end
 
   @impl true
-  def handle(%{text: <<@command <> full_name::binary>>} = _message, state) do
+  def handle(%{text: <<@command <> " repo " <> full_name::binary>>} = _message, state) do
     %{chat_id: chat_id} = state
 
     full_name = String.trim(full_name)
@@ -51,5 +52,14 @@ defmodule AssistantBot.Plugs.RespUnSubscribeRepoCmd do
     end
 
     {:ok, state}
+  end
+
+  @impl true
+  def handle(%{text: <<@command <> " pkgs " <> package_text::binary>>} = _message, state) do
+    %{chat_id: chat_id} = state
+
+    _ = package_text |> String.trim() |> String.split(" ") |> Enum.map(&remove_hex_pm_package/1)
+
+    send_text(chat_id, commands_text("取消订阅成功。"), logging: true)
   end
 end
