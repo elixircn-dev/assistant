@@ -21,9 +21,11 @@ defmodule Assistant.HexPm.RecentlyPoller do
   end
 
   def start_link(_) do
-    {:ok, [p1_sku, p2_sku]} = last_updated_packages(2)
+    {:ok, last_packages} = last_updated_packages(2)
 
-    GenServer.start_link(__MODULE__, %State{boot_skus: [p1_sku, p2_sku]}, name: __MODULE__)
+    skus = gen_last_skus(last_packages)
+
+    GenServer.start_link(__MODULE__, %State{boot_skus: skus}, name: __MODULE__)
   end
 
   @impl true
@@ -120,9 +122,7 @@ defmodule Assistant.HexPm.RecentlyPoller do
   end
 
   @spec gen_last_skus([Package.t()]) :: skus_type
-  defp gen_last_skus(packages) do
-    [p1, p2 | _] = packages
-
+  defp gen_last_skus([p1, p2 | _]) do
     [Package.sku(p1), Package.sku(p2)]
   end
 
