@@ -8,6 +8,8 @@ defmodule Assistant.HexPm.RecentlyPoller do
 
   import Assistant.HexPm.Client
 
+  @type skus_type :: [String.t()]
+
   # 每 61 秒读取一次通知
   @interval 61 * 1000
 
@@ -19,10 +21,7 @@ defmodule Assistant.HexPm.RecentlyPoller do
   end
 
   def start_link(_) do
-    {:ok, [p1, p2]} = last_updated_packages(2)
-
-    p1_sku = Package.sku(p1)
-    p2_sku = Package.sku(p2)
+    {:ok, [p1_sku, p2_sku]} = last_updated_packages(2)
 
     GenServer.start_link(__MODULE__, %State{boot_skus: [p1_sku, p2_sku]}, name: __MODULE__)
   end
@@ -46,19 +45,12 @@ defmodule Assistant.HexPm.RecentlyPoller do
     skus = state.last_skus || state.boot_skus
 
     skus =
-      case get_packages(skus) do
-        {:ok, packages} ->
+      case new_packages(skus) do
+        {:ok, packages, skus} ->
           # 消费新的包版本
           Enum.each(packages, &Consumer.receive/1)
 
-          if Enum.empty?(packages) do
-            # 没有新的包版本，返回当前 `skus`
-            skus
-          else
-            # 返回最新的 `skus`
-            # 此处因为包列表是倒序的（更新早的靠前），所以需要反转一下
-            packages |> Enum.reverse() |> gen_last_skus()
-          end
+          skus
 
         {:error, reason} ->
           # 发生错误，返回当前 `skus`
@@ -83,7 +75,9 @@ defmodule Assistant.HexPm.RecentlyPoller do
     Process.send_after(self(), :pull, @interval)
   end
 
-  def get_packages(skus, page \\ 1, all \\ [], new \\ []) do
+  @spec new_packages([String.t()], integer, list, list) ::
+          {:ok, [Package.t()], skus_type} | {:error, any}
+  def new_packages(skus, page \\ 1, all \\ [], new \\ []) do
     append_fun = fn p, new ->
       psku = Package.sku(p)
 
@@ -111,13 +105,13 @@ defmodule Assistant.HexPm.RecentlyPoller do
 
         cond do
           Enum.empty?(packages) ->
-            {:ok, Enum.reverse(new)}
+            {:ok, Enum.reverse(new), gen_last_skus(all)}
 
           length(new) < length(all) ->
-            {:ok, Enum.reverse(new)}
+            {:ok, Enum.reverse(new), gen_last_skus(all)}
 
           true ->
-            get_packages(skus, page + 1, all, new)
+            new_packages(skus, page + 1, all, new)
         end
 
       e ->
@@ -125,11 +119,11 @@ defmodule Assistant.HexPm.RecentlyPoller do
     end
   end
 
-  @spec gen_last_skus([Package.t()]) :: [Package.t()]
+  @spec gen_last_skus([Package.t()]) :: skus_type
   defp gen_last_skus(packages) do
     [p1, p2 | _] = packages
 
-    [p1, p2]
+    [Package.sku(p1), Package.sku(p2)]
   end
 
   def set_last_skus(p1, p2) when is_struct(p1, Package) and is_struct(p2, Package) do
