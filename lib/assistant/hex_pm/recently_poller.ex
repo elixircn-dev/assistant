@@ -9,7 +9,7 @@ defmodule Assistant.HexPm.RecentlyPoller do
   import Assistant.HexPm.Client
 
   # 每 61 秒读取一次通知
-  @interval 1 * 1000
+  @interval 61 * 1000
 
   require Logger
 
