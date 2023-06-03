@@ -4,7 +4,6 @@ defmodule Assistant.Forum.Checker do
   use TypedStruct
   use Assistant.I18n
   use Assistant.PubSub
-  use AssistantBot.MessageCaller
 
   alias Assistant.EasyStore
   alias Assistant.Forum.Topic
