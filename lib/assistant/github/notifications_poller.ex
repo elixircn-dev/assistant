@@ -44,7 +44,7 @@ defmodule Assistant.GitHub.NotificationsPoller do
     offset = EasyStore.get(@store_key, 0)
 
     offset =
-      case get_notifications(offset) do
+      case new_notifications(offset) do
         {:ok, notifications} ->
           # 消费通知
           Enum.each(notifications, &Consumer.dispatch/1)
@@ -87,36 +87,5 @@ defmodule Assistant.GitHub.NotificationsPoller do
   # 延迟调度通知读取，避免后续消费进程未启动。通常此函数在 `init/1` 中用作初次调用。 
   defp delay_schedule_pull_notifications do
     Process.send_after(self(), :pull, @interval)
-  end
-
-  def get_notifications(offset, page \\ 1, all \\ [], new \\ []) do
-    append_fun = fn n, new ->
-      if String.to_integer(n["id"]) > offset do
-        {:cont, new ++ [n]}
-      else
-        {:halt, new}
-      end
-    end
-
-    case notifications(page: page, per_page: 50) do
-      {:ok, notifications} ->
-        all = all ++ notifications
-
-        new = Enum.reduce_while(notifications, new, append_fun)
-
-        cond do
-          Enum.empty?(notifications) ->
-            {:ok, Enum.reverse(new)}
-
-          length(new) < length(all) ->
-            {:ok, Enum.reverse(new)}
-
-          true ->
-            get_notifications(offset, page + 1, all, new)
-        end
-
-      e ->
-        e
-    end
   end
 end

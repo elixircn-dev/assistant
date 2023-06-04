@@ -1,14 +1,12 @@
-defmodule Assistant.HexPm.RecentlyPollerTest do
+defmodule Assistant.HexPm.ClientTest do
   use ExUnit.Case
 
   import Assistant.Factory
-  import Assistant.HexPm.RecentlyPoller
+  import Assistant.HexPm.Client
 
   alias Assistant.HexPm.MockClient
 
   test "new_packages/4" do
-    Application.put_env(:assistant, :hex_pm_client, MockClient)
-
     Mox.defmock(MockClient, for: Assistant.HexPm.Client)
     Mox.expect(MockClient, :packages, fn _ -> build(:packages) end)
     Mox.expect(MockClient, :packages, fn _ -> build(:upgraded_packages) end)

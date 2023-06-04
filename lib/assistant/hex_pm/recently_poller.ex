@@ -21,9 +21,9 @@ defmodule Assistant.HexPm.RecentlyPoller do
   end
 
   def start_link(_) do
-    {:ok, last_packages} = last_updated_packages(2)
+    {:ok, packages} = packages(page: 1, sort: :updated_at)
 
-    skus = gen_last_skus(last_packages)
+    skus = gen_skus(packages)
 
     GenServer.start_link(__MODULE__, %State{boot_skus: skus}, name: __MODULE__)
   end
@@ -75,55 +75,6 @@ defmodule Assistant.HexPm.RecentlyPoller do
   # 延迟调度通知包列表，避免后续消费进程未启动。通常此函数在 `init/1` 中用作初次调用。 
   defp delay_schedule_pull_packages do
     Process.send_after(self(), :pull, @interval)
-  end
-
-  @spec new_packages([String.t()], integer, list, list) ::
-          {:ok, [Package.t()], skus_type} | {:error, any}
-  def new_packages(skus, page \\ 1, all \\ [], new \\ []) do
-    append_fun = fn p, new ->
-      psku = Package.sku(p)
-
-      cond do
-        match?([^psku, _], skus) ->
-          # 与最新的 sku 匹配，停止迭代
-          {:halt, new}
-
-        match?([_, ^psku], skus) ->
-          # 与第二个 sku 匹配，停止迭代
-          # 达到此处是因为最新的 sku 关联包升级了，达到第二个匹配的 sku，相当于第二重保证
-          # 假设在一个周期内，两个 sku 相关的包都升级了，就会出现无限递扫描包的情况，但发生机率非常小。如果发生，可以用更多数量的 sku 来保证
-          {:halt, new}
-
-        true ->
-          {:cont, new ++ [p]}
-      end
-    end
-
-    case packages(page: page, sort: :updated_at) do
-      {:ok, packages} ->
-        all = all ++ packages
-
-        new = Enum.reduce_while(packages, new, append_fun)
-
-        cond do
-          Enum.empty?(packages) ->
-            {:ok, Enum.reverse(new), gen_last_skus(all)}
-
-          length(new) < length(all) ->
-            {:ok, Enum.reverse(new), gen_last_skus(all)}
-
-          true ->
-            new_packages(skus, page + 1, all, new)
-        end
-
-      e ->
-        e
-    end
-  end
-
-  @spec gen_last_skus([Package.t()]) :: skus_type
-  defp gen_last_skus([p1, p2 | _]) do
-    [Package.sku(p1), Package.sku(p2)]
   end
 
   def set_last_skus(p1, p2) when is_struct(p1, Package) and is_struct(p2, Package) do

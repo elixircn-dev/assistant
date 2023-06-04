@@ -5,6 +5,37 @@ defmodule Assistant.GitHub.Client do
 
   def me, do: call(:get, "/user")
 
+  def new_notifications(offset, page \\ 1, all \\ [], new \\ []) do
+    append_fun = fn n, new ->
+      if String.to_integer(n["id"]) > offset do
+        {:cont, new ++ [n]}
+      else
+        {:halt, new}
+      end
+    end
+
+    case notifications(page: page, per_page: 50) do
+      {:ok, notifications} ->
+        all = all ++ notifications
+
+        new = Enum.reduce_while(notifications, new, append_fun)
+
+        cond do
+          Enum.empty?(notifications) ->
+            {:ok, Enum.reverse(new)}
+
+          length(new) < length(all) ->
+            {:ok, Enum.reverse(new)}
+
+          true ->
+            new_notifications(offset, page + 1, all, new)
+        end
+
+      e ->
+        e
+    end
+  end
+
   @spec notifications(keyword) :: {:ok, list} | {:error, any}
   def notifications(params \\ []), do: call(:get, "/notifications", params)
 
