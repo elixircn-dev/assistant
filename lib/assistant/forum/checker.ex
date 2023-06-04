@@ -6,30 +6,23 @@ defmodule Assistant.Forum.Checker do
   use Assistant.PubSub
 
   alias Assistant.EasyStore
-  alias Assistant.Forum.Topic
-  alias HTTPoison.Response
+
+  import Assistant.Forum.Client
 
   require Logger
 
   @pinned_forum_topics_key :pinned_forum_topics
 
-  @endpoint "https://elixirforum.com/latest.json?ascending=false"
-
   def run do
-    @endpoint |> HTTPoison.get() |> handle_response() |> check_and_notify()
-  end
+    case latest_topics(fn t -> t.pinned end) do
+      {:ok, topics} ->
+        check_and_notify(topics)
 
-  @spec handle_response({:ok, Response.t()} | {:error, any}) :: [Topic.t()]
-  defp handle_response({:ok, resp}) do
-    json = Jason.decode!(resp.body)
+      {:error, reason} ->
+        Logger.error("[forum] Request latest topics failed: #{inspect(reason: reason)}")
+    end
 
-    json["topic_list"]["topics"] |> Enum.map(&Topic.from/1) |> Enum.filter(& &1.pinned)
-  end
-
-  defp handle_response({:error, reason}) do
-    Logger.error("[forum] Topics request failed: #{inspect(reason: reason)}")
-
-    []
+    :ok
   end
 
   defp check_and_notify([]) do
