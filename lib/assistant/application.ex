@@ -18,15 +18,17 @@ defmodule Assistant.Application do
 
         # 发布/订阅服务。
         {Phoenix.PubSub, name: Assistant.PubSub},
-        # 基于 :dets 的简单存储。
+        # 基于 :dets 的简单存储
         Assistant.EasyStore,
-        # Hex.pm 包发布的消费者。
+        # Hex.pm 包发布的消费者
         Assistant.HexPm.Consumer,
-        # Hex.pm 最近包的轮询器。
+        # Hex.pm 最近包的轮询器
         Assistant.HexPm.RecentlyPoller,
-        # 轮询读取 GitHub 通知。
+        # GitHub 通知的消费者
+        Assistant.GitHub.Consumer,
+        # GitHub 通知的轮询器
         Assistant.GitHub.NotificationsPoller,
-        # 定时任务调度器。
+        # 定时任务调度器
         Assistant.Scheduler
       ]
       # Start the Telegram bot

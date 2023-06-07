@@ -9,7 +9,7 @@ defmodule Assistant.HexPm.Consumer do
 
   require Logger
 
-  def start_link(default \\ []) when is_list(default) do
+  def start_link(_) do
     DynamicSupervisor.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 

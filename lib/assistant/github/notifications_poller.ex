@@ -4,7 +4,7 @@ defmodule Assistant.GitHub.NotificationsPoller do
   use GenServer
   use TypedStruct
 
-  alias Assistant.EasyStore
+  alias Assistant.Subscriptions
   alias Assistant.GitHub.Consumer
 
   import Assistant.GitHub.Client
@@ -13,8 +13,6 @@ defmodule Assistant.GitHub.NotificationsPoller do
   @interval 61 * 1000
 
   require Logger
-
-  @store_key :github_notifications_offset
 
   typedstruct module: State do
     field :user_id, integer
@@ -41,20 +39,19 @@ defmodule Assistant.GitHub.NotificationsPoller do
   """
   @impl true
   def handle_info(:pull, state) do
-    offset = EasyStore.get(@store_key, 0)
+    offset = Subscriptions.get_github_notifications_offset()
 
     offset =
       case new_notifications(offset) do
+        {:ok, []} ->
+          offset
+
         {:ok, notifications} ->
           # 消费通知
-          Enum.each(notifications, &Consumer.dispatch/1)
+          Enum.each(notifications, &Consumer.receive/1)
 
-          if Enum.empty?(notifications) do
-            offset
-          else
-            # 返回最新的 `offset`
-            notifications |> List.last() |> Map.get("id") |> String.to_integer()
-          end
+          # 返回最新的 `offset`
+          notifications |> List.last() |> Map.get("id") |> String.to_integer()
 
         {:error, reason} ->
           Logger.warning("[github] Pull notifications failed: #{inspect(reason: reason)}")
@@ -62,11 +59,11 @@ defmodule Assistant.GitHub.NotificationsPoller do
           offset
       end
 
+    :ok = Subscriptions.put_github_notifications_offset(offset)
+
     :timer.sleep(@interval)
 
     schedule_pull_notifications()
-
-    :ok = EasyStore.put(@store_key, offset)
 
     {:noreply, state}
   end

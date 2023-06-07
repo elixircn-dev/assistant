@@ -41,12 +41,17 @@ defmodule AssistantBot.RespClearCmdPlug do
       "subscribed_repos" ->
         :ok = EasyStore.delete(@subscribed_repos_key)
 
-        send_text(chat_id, commands_text("已经清理所有订阅的仓库。"), logging: true)
+        send_text(chat_id, commands_text("已清理所有订阅的仓库。"), logging: true)
 
       "subscribed_pkgs" ->
         :ok = clear_hex_pm_subscribed_pkgs()
 
-        send_text(chat_id, commands_text("已经清理所有订阅的 Hex 包。"), logging: true)
+        send_text(chat_id, commands_text("已清理所有订阅的 Hex 包。"), logging: true)
+
+      "github_notifications" ->
+        :ok = clear_github_notifications_offset()
+
+        send_text(chat_id, commands_text("已清理 GitHub 通知缓存。"), logging: true)
 
       _ ->
         text = commands_text("未知的清理目标: %{target_name}。", target_name: "<code>#{task_name}</code>")

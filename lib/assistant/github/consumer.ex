@@ -1,12 +1,29 @@
 defmodule Assistant.GitHub.Consumer do
   @moduledoc false
 
+  use DynamicSupervisor
   use Assistant.PubSub
 
   import Assistant.Helper
   import Assistant.GitHub.Client
 
   require Logger
+
+  def start_link(_) do
+    DynamicSupervisor.start_link(__MODULE__, %{}, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_) do
+    DynamicSupervisor.init(strategy: :one_for_one)
+  end
+
+  def receive(%{} = notification) do
+    DynamicSupervisor.start_child(
+      __MODULE__,
+      {Task, fn -> dispatch(notification) end}
+    )
+  end
 
   def dispatch(%{"repository" => %{"full_name" => full_name}} = notification) do
     subscribed? = Enum.member?(subscribed_repos(), full_name)

@@ -117,9 +117,9 @@ defmodule AssistantBot.BroadcastCenter do
 
     <a href="#{repo_url}"><b>#{Telegex.Tools.safe_html(repo_name)}</b></a> <i>#{Telegex.Tools.safe_html(repo_description)}</i>
 
-    #{Telegex.Tools.safe_html(subject_title)}
+    <a href="#{tag_url}">#{Telegex.Tools.safe_html(subject_title)}</a>
 
-    <a href="#{tag_url}">#{Telegex.Tools.safe_html(title)}</a>
+    #{title}
 
     #{tfooter}
     """
