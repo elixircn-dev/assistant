@@ -31,7 +31,7 @@ defmodule Assistant.HexPm.Package do
     doc_url = doc_url(package)
 
     """
-    <b><u>Hex Package Publish</u></b>
+    <b><u>Package Updated</u></b>
 
     <a href="#{url}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> <i>#{Telegex.Tools.safe_html(package.description)}</i>
 
