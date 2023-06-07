@@ -12,11 +12,13 @@ config :assistant, Assistant.Gettext, default_locale: "zh"
 config :assistant, data_dir: "data"
 
 # 配置定时任务
-
 config :assistant, Assistant.Scheduler,
   jobs: [
     # Every 15 minutes
     {"*/15 * * * *", &Assistant.Forum.Checker.run/0}
   ]
+
+# 配置 Telegex 的 HTTP 客户端适配器
+config :telegex, Telegex.Caller, adapter: Telegex.Caller.HTTPoisonAdapter
 
 import_config "#{config_env()}.exs"
