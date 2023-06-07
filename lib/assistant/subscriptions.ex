@@ -16,7 +16,9 @@ defmodule Assistant.Subscriptions do
   end
 
   def hex_pm_subscribed_pkgs do
-    EasyStore.get(@hex_pm_subscribed_pkgs_key, [])
+    list = EasyStore.get(@hex_pm_subscribed_pkgs_key, [])
+
+    Enum.sort(list)
   end
 
   def clear_hex_pm_subscribed_pkgs do
