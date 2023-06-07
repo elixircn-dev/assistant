@@ -39,13 +39,13 @@ defmodule Assistant.MixProject do
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:mox, "~> 1.0", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:telegex, git: "https://github.com/Hentioe/telegex.git", branch: "api_5.4-dev"},
+      {:telegex, git: "https://github.com/Hentioe/telegex.git", branch: "refactoring/1.0"},
       {:telegex_plug, "~> 0.3"},
       {:typed_struct, "~> 0.2"},
       {:gettext, "~> 0.22"},
       {:quantum, "~> 3.5"},
       {:jason, "~> 1.4"},
-      {:httpoison, "~> 2.1", override: true},
+      {:httpoison, "~> 2.1"},
       {:phoenix_pubsub, "~> 2.1"},
       {:floki, "~> 0.34"}
     ]

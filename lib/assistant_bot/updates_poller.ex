@@ -5,8 +5,8 @@ defmodule AssistantBot.UpdatesPoller do
   use TypedStruct
 
   alias AssistantBot.{Info, Consumer}
-  alias Telegex.Model.User, as: TgUser
-  alias Telegex.Model.BotCommand
+  alias Telegex.Type.User, as: TgUser
+  alias Telegex.Type.BotCommand
 
   require Logger
 
@@ -102,7 +102,7 @@ defmodule AssistantBot.UpdatesPoller do
             List.last(updates).update_id + 1
           end
 
-        {:error, %Telegex.Model.Error{description: "Bad Gateway"}} ->
+        {:error, %Telegex.Error{description: "Bad Gateway"}} ->
           # TG 服务器故障，大幅度降低请求频率
           :timer.sleep(500)
 
