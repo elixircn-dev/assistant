@@ -39,7 +39,7 @@ defmodule Assistant.MixProject do
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:mox, "~> 1.0", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:telegex, git: "https://github.com/Hentioe/telegex.git", branch: "refactoring/1.0"},
+      {:telegex, git: "https://github.com/telegex/telegex.git", branch: "refactoring/1.0"},
       {:telegex_plug, "~> 0.3"},
       {:typed_struct, "~> 0.2"},
       {:gettext, "~> 0.22"},
