@@ -18,7 +18,4 @@ config :assistant, Assistant.Scheduler,
     {"*/15 * * * *", &Assistant.Forum.Checker.run/0}
   ]
 
-# 配置 Telegex 的 HTTP 客户端适配器
-config :telegex, Telegex.Caller, adapter: Telegex.Caller.HTTPoisonAdapter
-
 import_config "#{config_env()}.exs"
