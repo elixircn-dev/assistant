@@ -42,6 +42,11 @@ defmodule AssistantBot.Plugs.RespUnSubscribeCmd do
 
         send_text(chat_id, commands_text("已取消订阅。"), logging: true)
 
+      {:error, 404} ->
+        :ok = EasyStore.list_remove(@subscribed_repos_key, full_name)
+
+        send_text(chat_id, commands_text("已取消订阅。"), logging: true)
+
       {:error, reason} ->
         text =
           commands_text("取消订阅失败，原因：%{reason}。",
