@@ -4,9 +4,7 @@ defmodule AssistantBot.UpdatesPoller do
   use GenServer
   use TypedStruct
 
-  alias AssistantBot.{Info, Consumer}
-  alias Telegex.Type.User, as: TgUser
-  alias Telegex.Type.BotCommand
+  alias AssistantBot.Consumer
 
   require Logger
 
@@ -19,58 +17,15 @@ defmodule AssistantBot.UpdatesPoller do
     "callback_query"
   ]
 
-  @commands [
-    %BotCommand{
-      command: "subscribe",
-      description: "订阅新内容"
-    },
-    %BotCommand{
-      command: "unsubscribe",
-      description: "取消已订阅的内容"
-    },
-    %BotCommand{
-      command: "subscribed",
-      description: "已订阅的内容列表"
-    },
-    %BotCommand{
-      command: "clear",
-      description: "清理某些缓存"
-    },
-    %BotCommand{
-      command: "run",
-      description: "运行某些任务"
-    }
-  ]
-
-  def start_link(default \\ []) when is_list(default) do
+  def start_link(_) do
     # 初始化 bot 信息
-    if :ets.whereis(Info) == :undefined do
-      init_bot_info()
-    else
-      :ets.lookup(Info, :bot_info)
-    end
+    AssistantBot.init()
+    # 删除可能存在的 webhook 模式
+    Telegex.delete_webhook()
+
+    Logger.info("Bot (@#{AssistantBot.username()}) is working")
 
     GenServer.start_link(__MODULE__, %State{}, name: __MODULE__)
-  end
-
-  defp init_bot_info do
-    # 获取机器人必要信息
-    Logger.info("Checking bot information...")
-
-    %{username: username} = bot_info = get_bot_info()
-
-    Logger.info("Bot (@#{username}) is working")
-
-    # 更新 `Telegex.Plug` 中缓存的用户名
-    Telegex.Plug.update_username(username)
-    # 缓存机器人数据
-    :ets.new(Info, [:set, :named_table])
-    :ets.insert(Info, {:bot_info, bot_info})
-
-    # 设置命令列表
-    Telegex.set_my_commands(@commands)
-
-    bot_info
   end
 
   @impl true
@@ -134,30 +89,5 @@ defmodule AssistantBot.UpdatesPoller do
 
   defp schedule_pull_updates do
     send(self(), :pull)
-  end
-
-  @doc """
-  获取机器人信息。
-
-  此函数在遇到部分网络故障后会自动重试，且没有次数上限。
-  """
-  @spec get_bot_info() :: Info.t()
-  def get_bot_info do
-    case Telegex.get_me() do
-      {:ok, %TgUser{id: id, username: username, first_name: first_name}} ->
-        %Info{
-          id: id,
-          username: username,
-          name: first_name
-        }
-
-      {:error, %{reason: reason}} when reason in [:timeout, :closed] ->
-        Logger.warning("Retrying bot info check due to network issue...")
-
-        get_bot_info()
-
-      {:error, e} ->
-        raise e
-    end
   end
 end

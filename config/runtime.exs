@@ -12,6 +12,14 @@ if config_env() == :prod do
   # 配置 TG bot 的 token
   config :telegex, token: System.fetch_env!("ASSISTANT_BOT_TOKEN")
 
+  # 配置 bot 的工作模式
+  config :assistant, AssistantBot, work_mode: :webhook
+
+  # 配置 webhook 模式
+  config :assistant, AssistantBot.HookHandler,
+    webhook_url: System.fetch_env!("ASSISTANT_BOT_WEBHOOK_URL"),
+    server_port: System.fetch_env!("ASSISTANT_BOT_WEBHOOK_PORT")
+
   config :assistant, AssistantBot,
     # 配置拥有者的 TG ID
     owner_id: String.to_integer(System.fetch_env!("ASSISTANT_OWNER_ID")),

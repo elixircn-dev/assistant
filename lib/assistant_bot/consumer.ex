@@ -19,11 +19,11 @@ defmodule AssistantBot.Consumer do
   def receive(%Telegex.Type.Update{} = update) do
     DynamicSupervisor.start_child(
       __MODULE__,
-      {Task, fn -> task(update) end}
+      {Task, fn -> consume(update) end}
     )
   end
 
-  defp task(update) do
+  def consume(update) do
     Telegex.Plug.Pipeline.call(update, %State{})
   rescue
     e ->

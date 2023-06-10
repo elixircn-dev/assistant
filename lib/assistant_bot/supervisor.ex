@@ -30,12 +30,21 @@ defmodule AssistantBot.Supervisor do
       AssistantBot.Plugs.RespUnSubscribeCmd
     ])
 
+    updates_fetcher =
+      if AssistantBot.work_mode() == :webhook do
+        # webhook
+        AssistantBot.HookHandler
+      else
+        # polling
+        AssistantBot.UpdatesPoller
+      end
+
     children = [
-      # 消费更新的动态主管。
+      # 消费更新的动态主管
       AssistantBot.Consumer,
-      # 更新的拉取器。
-      AssistantBot.UpdatesPoller,
-      # 广播中心。
+      # 更新获取器（兼容两种模式）
+      updates_fetcher,
+      # 广播中心
       AssistantBot.BroadcastCenter
     ]
 
