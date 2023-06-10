@@ -9,12 +9,12 @@ defmodule Assistant.HexPm.Package do
     field :version, String.t(), enforce: true
   end
 
-  def from(node) do
-    name = node |> Floki.find("a") |> Floki.text()
-    description = node |> Floki.find("p") |> Floki.text()
-    version = node |> Floki.find("span.version") |> Floki.text()
-
-    %__MODULE__{name: name, description: description, version: version}
+  def from(map) when is_map(map) do
+    %__MODULE__{
+      name: map["name"],
+      description: map["meta"]["description"],
+      version: map["latest_version"]
+    }
   end
 
   def sku(package) do

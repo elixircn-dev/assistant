@@ -5,16 +5,13 @@ defmodule Assistant.HexPm.ClientImpl do
 
   @behaviour Assistant.HexPm.Client
 
-  @endpoint "https://hex.pm"
+  @endpoint "https://hex.pm/api"
 
   @impl true
   def packages(params) do
     case request("/packages", params) do
-      {:ok, document} ->
-        packages =
-          document
-          |> Floki.find(".package-list > ul > li")
-          |> Enum.map(&Package.from/1)
+      {:ok, list} ->
+        packages = Enum.map(list, &Package.from/1)
 
         {:ok, packages}
 
@@ -42,7 +39,7 @@ defmodule Assistant.HexPm.ClientImpl do
   end
 
   defp handle_response({:ok, resp}) do
-    Floki.parse_document(resp.body)
+    {:ok, Jason.decode!(resp.body)}
   end
 
   defp handle_response({:error, reason}) do
