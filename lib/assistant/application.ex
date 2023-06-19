@@ -16,7 +16,9 @@ defmodule Assistant.Application do
         # Starts a worker by calling: Assistant.Worker.start_link(arg)
         # {Assistant.Worker, arg}
 
-        # 发布/订阅服务。
+        # Finch 客户端
+        {Finch, name: MyFinch},
+        # 发布/订阅服务
         {Phoenix.PubSub, name: Assistant.PubSub},
         # 基于 :dets 的简单存储
         Assistant.EasyStore,

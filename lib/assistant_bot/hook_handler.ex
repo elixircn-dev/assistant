@@ -6,7 +6,7 @@ defmodule AssistantBot.HookHandler do
   alias AssistantBot.Consumer
 
   @impl true
-  def on_init do
+  def on_boot do
     # 初始化 bot
     AssistantBot.init()
     # read some parameters from your env config
@@ -14,7 +14,7 @@ defmodule AssistantBot.HookHandler do
     # delete the webhook and set it again
     Telegex.delete_webhook()
     # set the webhook (url and secret_token)
-    secret_token = 32 |> :crypto.strong_rand_bytes() |> Base.encode16()
+    secret_token = Telegex.Tools.gen_secret_token()
 
     Telegex.set_webhook(env_config[:webhook_url], secret_token: secret_token)
     # specify port for web server

@@ -9,7 +9,7 @@ defmodule Assistant.HexPm.ClientImpl do
 
   @impl true
   def packages(params) do
-    case request("/packages", params) do
+    case call("/packages", params) do
       {:ok, list} ->
         packages = Enum.map(list, &Package.from/1)
 
@@ -20,8 +20,8 @@ defmodule Assistant.HexPm.ClientImpl do
     end
   end
 
-  @spec request(String.t(), keyword) :: {:ok, map | list | integer} | {:error, any}
-  def request(path, params \\ []) do
+  @spec call(String.t(), keyword) :: {:ok, map | list | integer} | {:error, any}
+  def call(path, params \\ []) do
     query_string = URI.encode_query(Enum.into(params, %{}))
 
     url =
@@ -35,7 +35,7 @@ defmodule Assistant.HexPm.ClientImpl do
   end
 
   defp get(url) do
-    HTTPoison.get(url)
+    :get |> Finch.build(url) |> Finch.request(MyFinch)
   end
 
   defp handle_response({:ok, resp}) do

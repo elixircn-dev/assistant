@@ -5,7 +5,7 @@ defmodule Assistant.MixProject do
     [
       app: :assistant,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -27,7 +27,9 @@ defmodule Assistant.MixProject do
 
   defp dialyzer do
     [
-      plt_add_apps: [:iex, :mix]
+      plt_add_apps: [:iex, :mix],
+      # TODO: 待 dialyxir 的 BUG 修复后，移除 `plt_ignore_apps` 配置：https://github.com/jeremyjh/dialyxir/issues/502
+      plt_ignore_apps: [:ecto, :decimal]
     ]
   end
 
@@ -39,7 +41,7 @@ defmodule Assistant.MixProject do
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:mox, "~> 1.0", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:telegex, "~> 1.0.0-rc.6"},
+      {:telegex, "~> 1.0.0-rc.9"},
       {:telegex_plug, "~> 0.3"},
       {:finch, "~> 0.16.0"},
       {:multipart, "~> 0.4.0"},
@@ -50,9 +52,7 @@ defmodule Assistant.MixProject do
       {:gettext, "~> 0.22"},
       {:quantum, "~> 3.5"},
       {:jason, "~> 1.4"},
-      {:httpoison, "~> 2.1"},
-      {:phoenix_pubsub, "~> 2.1"},
-      {:floki, "~> 0.34"}
+      {:phoenix_pubsub, "~> 2.1"}
     ]
   end
 end

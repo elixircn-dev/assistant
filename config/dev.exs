@@ -1,7 +1,7 @@
 import Config
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console,
+config :logger, :default_formatter,
   format: "$metadata[$level] $message\n",
   metadata: [:chat_id]
 

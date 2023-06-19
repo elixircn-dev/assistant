@@ -57,7 +57,7 @@ defmodule Assistant.GitHub.Client do
         method when method in [:put, :post] ->
           json_body = Jason.encode!(params)
 
-          apply(__MODULE__, method, [url, json_body])
+          request(method, url, json_body)
 
         method when method in [:get, :delete] ->
           query_string = URI.encode_query(Enum.into(params, %{}))
@@ -69,7 +69,7 @@ defmodule Assistant.GitHub.Client do
               url
             end
 
-          apply(__MODULE__, method, [url])
+          request(method, url)
       end
 
     handle_response(r)
@@ -83,29 +83,23 @@ defmodule Assistant.GitHub.Client do
     "#{@endpoint}#{url}"
   end
 
-  @accept_header {"Accept", "application/vnd.github+json"}
+  @accept_header {"accept", "application/vnd.github+json"}
 
-  def post(url, body) do
-    HTTPoison.post(url, body, [@accept_header, authorization_header()])
+  def request(method, url) do
+    method |> Finch.build(url, [@accept_header, authorization_header()]) |> Finch.request(MyFinch)
   end
 
-  def put(url, body) do
-    HTTPoison.put(url, body, [@accept_header, authorization_header()])
+  def request(method, url, body) do
+    method
+    |> Finch.build(url, [@accept_header, authorization_header()], body)
+    |> Finch.request(MyFinch)
   end
 
-  def get(url) do
-    HTTPoison.get(url, [@accept_header, authorization_header()])
-  end
-
-  def delete(url) do
-    HTTPoison.delete(url, [@accept_header, authorization_header()])
-  end
-
-  defp handle_response({:ok, %{status_code: 204} = _resp}) do
+  defp handle_response({:ok, %{status: 204} = _resp}) do
     {:ok, 204}
   end
 
-  defp handle_response({:ok, %{status_code: 404} = _resp}) do
+  defp handle_response({:ok, %{status: 404} = _resp}) do
     {:error, 404}
   end
 
@@ -122,6 +116,6 @@ defmodule Assistant.GitHub.Client do
   defp authorization_header do
     token = Application.get_env(:assistant, :github_token)
 
-    {"Authorization", "Bearer #{token}"}
+    {"authorization", "Bearer #{token}"}
   end
 end
