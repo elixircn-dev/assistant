@@ -12,7 +12,7 @@ _未来它也许会支持更多来源，但由于目前主要用于 Elixir 的�
 
 ### Elixir 论坛主题订阅
 
-Assistant 可以自动检测论坛的置顶主题（帖子）动态，在发现有新的置顶主题时将它推送到 Telegram 群组。此外，如果置顶的主题中包含 `elixir-release` 标签，Assistant 会把关联的推送消息在群组中置顶。
+Assistant 可以自动检测论坛的置顶主题（帖子）动态，在发现有新的置顶主题时将它推送到群组。此外，如果置顶的主题中包含 `elixir-release` 标签，Assistant 会把关联的推送消息在群组中置顶。
 
 ### GitHub 仓库订阅
 
