@@ -1,29 +1,25 @@
-defmodule AssistantBot.RespRunCmdPlug do
+defmodule AssistantBot.RespRunChain do
   @moduledoc false
 
-  use AssistantBot, plug: [commander: :run]
+  use AssistantBot.Chain, {:command, :run}
 
   # 重写匹配规则，以 `/run` 开始即匹配。
   @impl true
-  def match(text, state) do
-    if String.starts_with?(text, @command) do
-      {:match, state}
-    else
-      {:nomatch, state}
-    end
+  def match?(%{text: text}, _context) do
+    String.starts_with?(text, @command)
   end
 
   # 直接删除非拥有者的消息。
   @impl true
-  def handle(message, %{from_owner: false} = state) do
+  def handle(message, %{from_owner: false} = context) do
     Telegex.delete_message(message.chat.id, message.message_id)
 
-    {:ok, state}
+    {:ok, context}
   end
 
   @impl true
-  def handle(%{text: <<@command <> task_name::binary>>} = _message, state) do
-    %{chat_id: chat_id} = state
+  def handle(%{text: <<@command <> task_name::binary>>} = _message, context) do
+    %{chat_id: chat_id} = context
 
     task_name = String.trim(task_name)
 
@@ -39,6 +35,6 @@ defmodule AssistantBot.RespRunCmdPlug do
         send_text(chat_id, text, parse_mode: "HTML", logging: true)
     end
 
-    {:ok, state}
+    {:ok, context}
   end
 end

@@ -1,32 +1,28 @@
-defmodule AssistantBot.Plugs.RespSubscribedCmd do
+defmodule AssistantBot.RespSubscribedChain do
   @moduledoc false
 
-  use AssistantBot, plug: [commander: :subscribed]
+  use AssistantBot.Chain, {:command, :subscribed}
 
   import Assistant.Subscriptions
   import Assistant.Helper
 
   # 重写匹配规则，以 `/subscribed` 开始即匹配。
   @impl true
-  def match(text, state) do
-    if String.starts_with?(text, @command) do
-      {:match, action(state, :subscribed)}
-    else
-      {:nomatch, state}
-    end
+  def match?(%{text: text} = _message, _context) do
+    String.starts_with?(text, @command)
   end
 
   # 直接删除非拥有者的消息。
   @impl true
-  def handle(message, %{from_owner: false} = state) do
+  def handle(message, %{from_owner: false} = context) do
     Telegex.delete_message(message.chat.id, message.message_id)
 
-    {:ok, state}
+    {:ok, action(context, :subscribed)}
   end
 
   @impl true
-  def handle(%{text: <<@command <> " repos">>} = _message, state) do
-    %{chat_id: chat_id} = state
+  def handle(%{text: <<@command <> " repos">>} = _message, context) do
+    %{chat_id: chat_id} = context
 
     ttitle = commands_text("已订阅的仓库列表")
 
@@ -38,12 +34,12 @@ defmodule AssistantBot.Plugs.RespSubscribedCmd do
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
 
-    {:ok, state}
+    {:ok, action(context, :subscribed)}
   end
 
   @impl true
-  def handle(%{text: <<@command <> " pkgs">>} = _message, state) do
-    %{chat_id: chat_id} = state
+  def handle(%{text: <<@command <> " pkgs">>} = _message, context) do
+    %{chat_id: chat_id} = context
 
     ttitle = commands_text("已订阅的包列表")
 
@@ -55,12 +51,12 @@ defmodule AssistantBot.Plugs.RespSubscribedCmd do
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
 
-    {:ok, state}
+    {:ok, action(context, :subscribed)}
   end
 
   @impl true
-  def handle(_message, state) do
-    %{chat_id: chat_id} = state
+  def handle(_message, context) do
+    %{chat_id: chat_id} = context
 
     ttitle1 = commands_text("已订阅的仓库列表")
     ttitle2 = commands_text("已订阅的包列表")
@@ -77,7 +73,7 @@ defmodule AssistantBot.Plugs.RespSubscribedCmd do
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
 
-    {:ok, state}
+    {:ok, action(context, :subscribed)}
   end
 
   defp render_subscribed_repos([]) do

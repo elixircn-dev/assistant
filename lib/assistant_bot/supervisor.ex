@@ -9,41 +9,18 @@ defmodule AssistantBot.Supervisor do
 
   @impl true
   def init(_init_arg) do
-    install_plugs([
-      # 初始化发送来源，必须位于第一个
-      AssistantBot.InitSendSourcePlug,
-      # 初始化 `from_owner` 字段
-      AssistantBot.InitFromOwnerPlug,
-      # 初始化 `from_self` 字段
-      AssistantBot.InitFromSelfPlug,
-      # 响应 `/start` 命令
-      AssistantBot.RespStartCmdPlug,
-      # 响应 `/run` 命令
-      AssistantBot.RespRunCmdPlug,
-      # 响应 `/clear` 命令
-      AssistantBot.RespClearCmdPlug,
-      # 响应 `/subscribed` 命令
-      AssistantBot.Plugs.RespSubscribedCmd,
-      # 响应 `/subscribe` 命令
-      AssistantBot.Plugs.RespSubscribeCmd,
-      # 响应 `/unsubscribe` 命令
-      AssistantBot.Plugs.RespUnSubscribeCmd
-    ])
-
-    updates_fetcher =
+    updates_handler =
       if AssistantBot.work_mode() == :webhook do
         # webhook
         AssistantBot.HookHandler
       else
         # polling
-        AssistantBot.UpdatesPoller
+        AssistantBot.PollingHandler
       end
 
     children = [
-      # 消费更新的动态主管
-      AssistantBot.Consumer,
-      # 更新获取器（兼容两种模式）
-      updates_fetcher,
+      # 更新处理器（兼容两种模式）
+      updates_handler,
       # 广播中心
       AssistantBot.BroadcastCenter
     ]
@@ -53,9 +30,5 @@ defmodule AssistantBot.Supervisor do
     opts = [strategy: :one_for_one]
 
     Supervisor.init(children, opts)
-  end
-
-  defp install_plugs(plugs) do
-    Telegex.Plug.Pipeline.install_all(plugs)
   end
 end
