@@ -1,6 +1,6 @@
 # Assistant
 
-Assistant 是以信息推送为主的项目，它是为 Elixir 中文开发者们设计的机器人助理。
+Assistant 是一个增量信息收集/订阅和推送为主的平台，它也是为 Elixir 中文开发者们设计的机器人助理。
 
 _目前 [@elixircn_assistant_bot](https://t.me/elixircn_assistant_bot) 仅服务于 [@elixircn_dev](https://t.me/elixircn_dev) 群组。_
 
