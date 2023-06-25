@@ -72,7 +72,7 @@ defmodule AssistantBot.BroadcastCenter do
 
     case send_text(chat_id, text, @send_opts) do
       {:ok, %{message_id: message_id}} ->
-        if pin?, do: Telegex.pin_chat_message(chat_id, message_id)
+        if pin?, do: Telegex.pin_chat_message(chat_id, message_id, disable_notification: true)
 
         nil
 
