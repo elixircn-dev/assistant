@@ -1,10 +1,7 @@
-FROM debian:bullseye
+FROM alpine:3
 
 
-RUN apt-get update \
-    && apt-get install libssl1.1 libsctp1 -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/lib/apt/lists/partial/*
+RUN apk add ncurses libstdc++
 
 
 ARG APP_HOME=/home/assistant
