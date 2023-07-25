@@ -5,7 +5,7 @@ name: default
 
 steps:
   - name: app-build
-    image: elixircn/elixir:1.15.2-otp-26-slim
+    image: elixircn/elixir:1.15.4-otp-26-slim
     environment:
       MIX_ENV: prod
     commands:
