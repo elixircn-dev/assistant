@@ -40,7 +40,7 @@ defmodule AssistantBot.RespSubscribeChain do
 
     case subscribe(owner, repo) do
       {:ok, _} ->
-        :ok = EasyStore.list_append(@subscribed_repos_key, full_name)
+        _ = EasyStore.list_append(@subscribed_repos_key, full_name, [:unique])
 
         send_text(chat_id, commands_text("订阅成功。"), logging: true)
 

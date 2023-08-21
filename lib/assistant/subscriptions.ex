@@ -8,7 +8,7 @@ defmodule Assistant.Subscriptions do
 
   def add_hex_pm_package(pname) do
     # TODO: 检查添加包是否存在。
-    EasyStore.list_append(@hex_pm_subscribed_pkgs_key, pname)
+    EasyStore.list_append(@hex_pm_subscribed_pkgs_key, pname, [:unique])
   end
 
   def remove_hex_pm_package(pname) do
