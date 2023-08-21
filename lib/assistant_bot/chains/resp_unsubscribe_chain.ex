@@ -30,7 +30,7 @@ defmodule AssistantBot.RespUnSubscribeChain do
 
     full_name = String.trim(full_name)
 
-    [owner, repo, _rest] = String.split(full_name, "/")
+    [owner, repo | _rest] = String.split(full_name, "/")
 
     case unsubscribe(owner, repo) do
       {:ok, _} ->
