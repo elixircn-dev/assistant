@@ -28,8 +28,6 @@ defmodule Assistant.MixProject do
   defp dialyzer do
     [
       plt_add_apps: [:iex, :mix],
-      # TODO: 待 dialyxir 的 BUG 修复后，移除 `plt_ignore_apps` 配置：https://github.com/jeremyjh/dialyxir/issues/502
-      plt_ignore_apps: [:ecto, :decimal]
     ]
   end
 
