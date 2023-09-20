@@ -10,8 +10,6 @@ defmodule AssistantBot.BroadcastCenter do
   alias Assistant.Forum.Topic
   alias Assistant.HexPm.Package
 
-  import Assistant.Helper
-
   require Logger
 
   @pinned_forum_topics_key :pinned_forum_topics
@@ -91,37 +89,18 @@ defmodule AssistantBot.BroadcastCenter do
     repo_url = notification["repository"]["html_url"]
     full_name = notification["repository"]["full_name"]
     subject_title = notification["subject"]["title"]
-
-    updated_at =
-      case DateTime.from_iso8601(notification["updated_at"]) do
-        {:ok, dt, 0} ->
-          dt
-
-        {:error, reason} ->
-          Logger.error(
-            "[github] Parse notification `updated_at` failed: #{inspect(reason: reason)}",
-            chat_id: chat_id
-          )
-
-          nil
-      end
-
     tag_name = subject["tag_name"]
     tag_url = subject["html_url"]
-
     title = "#{tag_name} in #{full_name}"
-    tfooter = commands_text("新的发布，更新于 %{elapsed_time}。", elapsed_time: elapsed_time(updated_at))
 
     text = """
-    <b><u>Repo Release</u></b>
+    <b><u>订阅仓库有新的发布</u></b>
 
     <a href="#{repo_url}"><b>#{Telegex.Tools.safe_html(repo_name)}</b></a> <i>#{Telegex.Tools.safe_html(repo_description)}</i>
 
     <a href="#{tag_url}">#{Telegex.Tools.safe_html(subject_title)}</a>
 
     #{title}
-
-    #{tfooter}
     """
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
