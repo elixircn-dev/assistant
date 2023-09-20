@@ -27,7 +27,7 @@ defmodule Assistant.MixProject do
 
   defp dialyzer do
     [
-      plt_add_apps: [:iex, :mix],
+      plt_add_apps: [:iex, :mix]
     ]
   end
 
