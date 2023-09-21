@@ -5,7 +5,7 @@ name: default
 
 steps:
   - name: app-build
-    image: elixircn/elixir:1.15.6-otp-26-alpine
+    image: hentioe/elixir:1.15.6-otp-26-alpine
     pull: always
     environment:
       MIX_ENV: prod
@@ -17,8 +17,8 @@ steps:
   - name: image-push
     image: plugins/docker
     settings:
-      repo: elixircn/assistant
-      username: elixircn
+      repo: hentioe/assistant
+      username: hentioe
       password:
         from_secret: docker_hub_pass
       dockerfile: Dockerfile
