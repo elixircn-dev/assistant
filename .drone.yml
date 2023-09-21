@@ -17,8 +17,8 @@ steps:
   - name: image-push
     image: plugins/docker
     settings:
-      repo: hentioe/assistant
-      username: hentioe
+      repo: elixircn/assistant
+      username: elixircn
       password:
         from_secret: docker_hub_pass
       dockerfile: Dockerfile
