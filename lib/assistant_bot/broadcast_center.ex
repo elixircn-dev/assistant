@@ -94,7 +94,7 @@ defmodule AssistantBot.BroadcastCenter do
     title = "#{tag_name} in #{full_name}"
 
     text = """
-    <b><u>订阅仓库有新的发布</u></b>
+    <b><u>Repo Release</u></b>
 
     <a href="#{repo_url}"><b>#{Telegex.Tools.safe_html(repo_name)}</b></a> <i>#{Telegex.Tools.safe_html(repo_description)}</i>
 
