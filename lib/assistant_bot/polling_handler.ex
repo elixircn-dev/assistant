@@ -1,7 +1,7 @@
 defmodule AssistantBot.PollingHandler do
   @moduledoc false
 
-  use Telegex.Polling.Handler
+  use Telegex.Polling.GenHandler
 
   @allowed_updates [
     "message",
@@ -25,6 +25,6 @@ defmodule AssistantBot.PollingHandler do
   @impl true
   def on_update(update) do
     # consume the update
-    AssistantBot.ChainHandler.call(update, %AssistantBot.ChainContext{bot: Telegex.Instance.me()})
+    AssistantBot.ChainHandler.call(update, %AssistantBot.ChainContext{bot: Telegex.Instance.bot()})
   end
 end

@@ -1,7 +1,7 @@
 defmodule AssistantBot.HookHandler do
   @moduledoc false
 
-  use Telegex.Hook.Handler
+  use Telegex.Hook.GenHandler
 
   @impl true
   def on_boot do
@@ -30,6 +30,6 @@ defmodule AssistantBot.HookHandler do
   @impl true
   def on_update(update) do
     # consume the update
-    AssistantBot.ChainHandler.call(update, %AssistantBot.ChainContext{bot: Telegex.Instance.me()})
+    AssistantBot.ChainHandler.call(update, %AssistantBot.ChainContext{bot: Telegex.Instance.bot()})
   end
 end

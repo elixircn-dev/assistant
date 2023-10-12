@@ -5,7 +5,7 @@ defmodule AssistantBot.InitFromSelfChain do
 
   @impl true
   def handle(_update, %{user_id: user_id} = context) do
-    context = %{context | from_self: user_id == Telegex.Instance.me().id}
+    context = %{context | from_self: user_id == Telegex.Instance.bot().id}
 
     {:ok, context}
   end

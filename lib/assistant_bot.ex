@@ -52,7 +52,7 @@ defmodule AssistantBot do
     # 设置命令列表
     {:ok, true} = Telegex.set_my_commands(@commands)
 
-    Telegex.Instance.get_me()
+    Telegex.Instance.fetch_me()
   end
 
   def work_mode, do: config(:work_mode)
