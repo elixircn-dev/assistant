@@ -9,8 +9,11 @@ if config_env() == :prod do
   # 配置 GitHub token
   config :assistant, github_token: System.fetch_env!("ASSISTANT_GITHUB_TOKEN")
 
-  # 配置 TG bot 的 token
-  config :telegex, token: System.fetch_env!("ASSISTANT_BOT_TOKEN")
+  config :telegex,
+    # 配置 bot 的 token。
+    token: System.fetch_env!("ASSISTANT_BOT_TOKEN"),
+    # 配置 bot 的 API 地址。
+    api_base_url: System.get_env("ASSISTANT_BOT_API_BASE_URL") || "https://api.telegram.org/bot"
 
   # 配置 bot 的工作模式
   config :assistant, AssistantBot, work_mode: :webhook
