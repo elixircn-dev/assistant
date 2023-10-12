@@ -85,11 +85,14 @@ defmodule AssistantBot.BroadcastCenter do
     chat_id = AssistantBot.config(:group_id)
 
     full_name = notification["repository"]["full_name"]
+    repo_description = notification["repository"]["description"]
     subject_title = notification["subject"]["title"]
     tag_url = subject["html_url"]
 
     text = """
-    Released <a href="#{tag_url}">#{Telegex.Tools.safe_html(subject_title)}</a> in #{full_name}
+    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(subject_title)}</a> in #{full_name}
+
+    <i>#{Telegex.Tools.safe_html(repo_description)}</i>
     """
 
     send_text(chat_id, text, parse_mode: "HTML", logging: true)
