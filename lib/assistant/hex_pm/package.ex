@@ -28,7 +28,7 @@ defmodule Assistant.HexPm.Package do
   @spec render_message_text(:publish, __MODULE__.t()) :: String.t()
   def render_message_text(:publish, package) do
     """
-    <b>Updated</b> <a href="#{url(package)}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> to v#{Telegex.Tools.safe_html(package.version)}
+    <b>Updated</b> <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> to v#{Telegex.Tools.safe_html(package.version)}
 
     <i>#{Telegex.Tools.safe_html(package.description)}</i>
 
