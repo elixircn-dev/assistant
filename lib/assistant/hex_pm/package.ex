@@ -27,17 +27,12 @@ defmodule Assistant.HexPm.Package do
 
   @spec render_message_text(:publish, __MODULE__.t()) :: String.t()
   def render_message_text(:publish, package) do
-    url = url(package)
-    doc_url = doc_url(package)
-
     """
-    <b><u>Package Updated</u></b>
+    <b>Updated</b> <a href="#{url(package)}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> to v#{Telegex.Tools.safe_html(package.version)}
 
-    <a href="#{url}"><b>#{Telegex.Tools.safe_html(package.name)}</b></a> <i>#{Telegex.Tools.safe_html(package.description)}</i>
+    <i>#{Telegex.Tools.safe_html(package.description)}</i>
 
-    v#{Telegex.Tools.safe_html(package.version)}
-
-    <a href="#{doc_url}">阅读文档</a>
+    <a href="#{doc_url(package)}">Document</a>
     """
   end
 end
