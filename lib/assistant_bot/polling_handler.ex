@@ -27,4 +27,11 @@ defmodule AssistantBot.PollingHandler do
     # consume the update
     AssistantBot.ChainHandler.call(update, %AssistantBot.ChainContext{bot: Telegex.Instance.bot()})
   end
+
+  @impl true
+  def on_failure(_update, {e, stacktrace}) do
+    Logger.error(
+      "Uncaught Error: #{inspect(exception: e)}\n#{Exception.format(:error, e, stacktrace)}"
+    )
+  end
 end
