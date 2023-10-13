@@ -15,8 +15,10 @@ if config_env() == :prod do
     # 配置 bot 的 API 地址。
     api_base_url: System.get_env("ASSISTANT_BOT_API_BASE_URL") || "https://api.telegram.org/bot"
 
-  # 配置 bot 的工作模式
-  config :assistant, AssistantBot, work_mode: :webhook
+  # 配置机器人。
+  config :assistant, AssistantBot,
+    # 配置工作模式。
+    work_mode: String.to_atom(System.get_env("ASSISTANT_BOT_WORK_MODE") || "polling")
 
   # 配置 webhook 模式
   config :assistant, AssistantBot.HookHandler,
