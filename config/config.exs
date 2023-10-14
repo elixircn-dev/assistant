@@ -18,4 +18,9 @@ config :assistant, Assistant.Scheduler,
     {"*/15 * * * *", &Assistant.Forum.Checker.run/0}
   ]
 
+# 配置 Telegex。
+config :telegex,
+  caller_adapter: {Finch, [receive_timeout: 5 * 1000]},
+  hook_adapter: Cowboy
+
 import_config "#{config_env()}.exs"
