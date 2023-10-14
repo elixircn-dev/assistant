@@ -32,7 +32,7 @@ defmodule Assistant.HexPm.Package do
 
     <i>#{Telegex.Tools.safe_html(package.description)}</i>
 
-    <a href="#{doc_url(package)}">Document</a>
+    <a href="#{doc_url(package)}">阅读文档</a>
     """
   end
 end
