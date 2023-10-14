@@ -86,11 +86,11 @@ defmodule AssistantBot.BroadcastCenter do
 
     full_name = notification["repository"]["full_name"]
     repo_description = notification["repository"]["description"]
-    subject_title = notification["subject"]["title"]
     tag_url = subject["html_url"]
+    tag_name = subject["tag_name"]
 
     text = """
-    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(subject_title)}</a> in #{full_name}
+    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a> in #{full_name}
 
     <i>#{Telegex.Tools.safe_html(repo_description)}</i>
     """
