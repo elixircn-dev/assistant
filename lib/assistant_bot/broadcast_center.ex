@@ -6,7 +6,7 @@ defmodule AssistantBot.BroadcastCenter do
   use Assistant.I18n
   use AssistantBot.MessageCaller
 
-  alias Assistant.EasyStore
+  alias Assistant.{EasyStore, PushCounter}
   alias Assistant.Forum.Topic
   alias Assistant.HexPm.Package
 
@@ -82,32 +82,39 @@ defmodule AssistantBot.BroadcastCenter do
   end
 
   def push_repo_release(notification, subject) do
-    chat_id = AssistantBot.config(:group_id)
+    alias Assistant.GitHub.Notification
 
-    full_name = notification["repository"]["full_name"]
-    repo_description = notification["repository"]["description"]
-    tag_url = subject["html_url"]
-    tag_name = subject["tag_name"]
+    count_key = Notification.key(notification)
 
-    text = """
-    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a> in #{full_name}
+    text =
+      Notification.render_message_text(PushCounter.get_count(count_key), notification, subject)
 
-    <i>#{Telegex.Tools.safe_html(repo_description)}</i>
-    """
+    case send_text(AssistantBot.config(:group_id), text, parse_mode: "HTML", logging: true) do
+      {:ok, _} ->
+        # 自增推送计数，仅在推送成功时自增。
+        :ok = PushCounter.increase(count_key)
 
-    send_text(chat_id, text, parse_mode: "HTML", logging: true)
+        :ok
 
-    :ok
+      _ ->
+        :error
+    end
   end
 
   @spec push_pkg_publish(Package.t()) :: :ok
   def push_pkg_publish(package) do
-    chat_id = AssistantBot.config(:group_id)
+    count_key = Package.key(package)
+    text = Package.render_message_text(PushCounter.get_count(count_key), package)
 
-    text = Package.render_message_text(:publish, package)
+    case send_text(AssistantBot.config(:group_id), text, parse_mode: "HTML", logging: true) do
+      {:ok, _} ->
+        # 自增推送计数，仅在推送成功时自增。
+        :ok = PushCounter.increase(count_key)
 
-    send_text(chat_id, text, parse_mode: "HTML", logging: true)
+        :ok
 
-    :ok
+      _ ->
+        :error
+    end
   end
 end
