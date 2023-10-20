@@ -7,7 +7,7 @@ defmodule Assistant.GitHub.Notification do
     "repo-" <> notification["repository"]["full_name"]
   end
 
-  def render_message_text(push_count, notification, subject) when push_count <= 5 do
+  def render_message_text(push_count, notification, subject) when push_count <= 3 do
     full_name = notification["repository"]["full_name"]
     repo_description = notification["repository"]["description"]
     tag_url = subject["html_url"]

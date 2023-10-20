@@ -31,7 +31,7 @@ defmodule Assistant.HexPm.Package do
   end
 
   @spec render_message_text(non_neg_integer, __MODULE__.t()) :: String.t()
-  def render_message_text(push_count, package) when push_count <= 5 do
+  def render_message_text(push_count, package) when push_count <= 3 do
     """
     <b>Updated</b> <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> to v#{Telegex.Tools.safe_html(package.version)}
 
