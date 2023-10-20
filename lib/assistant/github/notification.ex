@@ -14,7 +14,7 @@ defmodule Assistant.GitHub.Notification do
     tag_name = subject["tag_name"]
 
     """
-    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a> in #{full_name}
+    #{full_name} <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a>
 
     <i>#{Telegex.Tools.safe_html(repo_description)}</i>
     """
@@ -26,7 +26,7 @@ defmodule Assistant.GitHub.Notification do
     tag_name = subject["tag_name"]
 
     """
-    <b>Released</b> <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a> in #{full_name}
+    #{full_name} <a href="#{tag_url}">#{Telegex.Tools.safe_html(tag_name)}</a>
     """
   end
 end
