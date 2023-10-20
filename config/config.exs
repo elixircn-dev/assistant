@@ -21,6 +21,6 @@ config :assistant, Assistant.Scheduler,
 # 配置 Telegex。
 config :telegex,
   caller_adapter: {Finch, [receive_timeout: 5 * 1000]},
-  hook_adapter: Cowboy
+  hook_adapter: Bandit
 
 import_config "#{config_env()}.exs"
