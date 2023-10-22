@@ -1,0 +1,36 @@
+kind: pipeline
+spec:
+  options: {}
+  stages:
+    - name: default
+      spec:
+        clone: {}
+        runtime:
+          spec: {}
+          type: machine
+        steps:
+          - name: app-build
+            type: script
+            spec:
+              envs:
+                MIX_ENV: prod
+              image: hentioe/elixir:1.15.7-otp-26-alpine
+              pull: always
+              run: |-
+                mix deps.get
+                mix compile
+                mix release
+          - name: image-push
+            type: plugin
+            when: build.target == "main"
+            spec:
+              name: docker
+              inputs:
+                dockerfile: Dockerfile
+                repo: elixircn/assistant
+                username: elixircn
+                password: ${{ secrets.get("elixircn_dockerhub_pass") }}
+                tags: latest
+                purge: "true"
+      type: ci
+version: 1
