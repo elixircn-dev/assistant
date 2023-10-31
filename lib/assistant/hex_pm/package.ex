@@ -33,7 +33,7 @@ defmodule Assistant.HexPm.Package do
   @spec render_message_text(non_neg_integer, __MODULE__.t()) :: String.t()
   def render_message_text(push_count, package) when push_count <= 3 do
     """
-    <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> v#{Telegex.Tools.safe_html(package.version)}
+    <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> #{Telegex.Tools.safe_html(package.version)}
 
     <i>#{Telegex.Tools.safe_html(package.description)}</i>
     """
@@ -41,7 +41,7 @@ defmodule Assistant.HexPm.Package do
 
   def render_message_text(_push_count, package) do
     """
-    <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> v#{Telegex.Tools.safe_html(package.version)}
+    <a href="#{url(package)}">#{Telegex.Tools.safe_html(package.name)}</a> #{Telegex.Tools.safe_html(package.version)}
     """
   end
 end
