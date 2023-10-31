@@ -85,16 +85,16 @@ defmodule AssistantBot.BroadcastCenter do
     alias Assistant.GitHub.Notification
 
     count_key = Notification.key(notification)
+    push_count = PushCounter.get_count(count_key)
 
-    text =
-      Notification.render_message_text(PushCounter.get_count(count_key), notification, subject)
+    Logger.debug("[github] Push counter: #{count_key}:#{push_count}")
+
+    text = Notification.render_message_text(push_count, notification, subject)
 
     case send_text(AssistantBot.config(:group_id), text, parse_mode: "HTML", logging: true) do
       {:ok, _} ->
         # 自增推送计数，仅在推送成功时自增。
         :ok = PushCounter.increase(count_key)
-
-        :ok
 
       _ ->
         :error
@@ -104,14 +104,16 @@ defmodule AssistantBot.BroadcastCenter do
   @spec push_pkg_publish(Package.t()) :: :ok
   def push_pkg_publish(package) do
     count_key = Package.key(package)
-    text = Package.render_message_text(PushCounter.get_count(count_key), package)
+    push_count = PushCounter.get_count(count_key)
+
+    Logger.debug("[hex_pm] Push counter: #{count_key}:#{push_count}")
+
+    text = Package.render_message_text(push_count, package)
 
     case send_text(AssistantBot.config(:group_id), text, parse_mode: "HTML", logging: true) do
       {:ok, _} ->
         # 自增推送计数，仅在推送成功时自增。
         :ok = PushCounter.increase(count_key)
-
-        :ok
 
       _ ->
         :error
