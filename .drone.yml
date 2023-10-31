@@ -5,7 +5,7 @@ name: default
 
 steps:
   - name: app-build
-    image: hentioe/elixir:1.15.7-otp-26-alpine
+    image: hentioe/elixir:1.16.0-rc.0-otp-26-alpine
     pull: always
     environment:
       MIX_ENV: prod
