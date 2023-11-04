@@ -46,7 +46,7 @@ defmodule Assistant.MixProject do
       {:remote_ip, "~> 1.1"},
       {:bandit, "~> 1.0.0"},
       {:typed_struct, "~> 0.2"},
-      {:gettext, "~> 0.22"},
+      {:gettext, "~> 0.23.1"},
       {:quantum, "~> 3.5"},
       {:jason, "~> 1.4"},
       {:phoenix_pubsub, "~> 2.1"}
