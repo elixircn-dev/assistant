@@ -44,7 +44,7 @@ defmodule Assistant.MixProject do
       {:multipart, "~> 0.4.0"},
       {:plug, "~> 1.14"},
       {:remote_ip, "~> 1.1"},
-      {:bandit, "~> 1.0.0"},
+      {:bandit, "~> 1.1.1"},
       {:typed_struct, "~> 0.2"},
       {:gettext, "~> 0.23.1"},
       {:quantum, "~> 3.5"},
