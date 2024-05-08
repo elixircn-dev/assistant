@@ -10,6 +10,12 @@ run +args='':
 test:
     mix test
 
+check:
+    just format
+    mix credo --mute-exit-status
+    mix dialyzer
+    just test
+
 destory:
     just clean
 
