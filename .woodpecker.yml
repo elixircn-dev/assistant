@@ -1,0 +1,25 @@
+steps:
+  app-build:
+    image: hentioe/elixir:1.17.0-rc.0-otp-27-alpine
+    pull: true
+    environment:
+      MIX_ENV: prod
+    commands:
+      - mix deps.get
+      - mix compile
+      - mix release
+    when:
+      branch: main
+      event: push
+
+  image-build-push:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      repo: elixircn/assistant
+      username: elixircn
+      password:
+        from_secret: elixircn_docker_pass
+      dockerfile: Dockerfile
+    when:
+      branch: main
+      event: push
