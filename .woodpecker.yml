@@ -23,3 +23,12 @@ steps:
     when:
       branch: main
       event: push
+
+  schedule-deploy:
+    image: curlimages/curl
+    commands:
+      - curl -f -X POST $PRE_DEPLOY_HOOK_URL
+    secrets: [PRE_DEPLOY_HOOK_URL]
+    when:
+      branch: main
+      event: push
