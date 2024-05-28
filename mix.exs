@@ -39,7 +39,7 @@ defmodule Assistant.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:mox, "~> 1.0", only: [:test]},
-      {:telegex, "~> 1.7.0"},
+      {:telegex, "~> 1.8.0"},
       {:finch, "~> 0.18.0"},
       {:multipart, "~> 0.4.0"},
       {:plug, "~> 1.15"},
