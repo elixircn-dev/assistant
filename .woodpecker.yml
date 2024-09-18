@@ -1,6 +1,10 @@
+when:
+  - branch: [main]
+    event: push
+
 steps:
   app-build:
-    image: hentioe/elixir:1.17.1-otp-27-alpine
+    image: hentioe/elixir:1.17.3-otp-27-alpine
     pull: true
     environment:
       MIX_ENV: prod
@@ -8,27 +12,20 @@ steps:
       - mix deps.get
       - mix compile
       - mix release
-    when:
-      branch: main
-      event: push
 
   image-build-push:
-    image: woodpeckerci/plugin-docker-buildx
+    image: reg.hentioe.dev/library/plugin-docker-buildx
+    privileged: true
+    pull: true
     settings:
       repo: elixircn/assistant
       username: elixircn
       password:
         from_secret: elixircn_docker_pass
       dockerfile: Dockerfile
-    when:
-      branch: main
-      event: push
 
   schedule-deploy:
     image: curlimages/curl
     commands:
       - curl -f -X POST $PRE_DEPLOY_HOOK_URL
     secrets: [PRE_DEPLOY_HOOK_URL]
-    when:
-      branch: main
-      event: push

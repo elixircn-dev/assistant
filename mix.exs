@@ -38,18 +38,18 @@ defmodule Assistant.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:mox, "~> 1.0", only: [:test]},
-      {:telegex, "~> 1.8.0"},
-      {:finch, "~> 0.18.0"},
+      {:mox, "~> 1.2", only: [:test]},
+      {:telegex, "~> 1.9.0-rc.0"},
+      {:finch, "~> 0.19.0"},
       {:multipart, "~> 0.4.0"},
-      {:plug, "~> 1.15"},
-      {:remote_ip, "~> 1.1"},
+      {:plug, "~> 1.16"},
+      {:remote_ip, "~> 1.2"},
       {:bandit, "~> 1.5"},
-      {:typed_struct, "~> 0.2"},
-      {:gettext, "~> 0.24.0"},
-      {:quantum, "~> 3.5"},
-      {:jason, "~> 1.4"},
-      {:phoenix_pubsub, "~> 2.1"}
+      {:typed_struct, "~> 0.3.0"},
+      {:gettext, "~> 0.26.1"},
+      {:quantum, "~> 3.5.3"},
+      {:jason, "~> 1.4.4"},
+      {:phoenix_pubsub, "~> 2.1.3"}
     ]
   end
 end
